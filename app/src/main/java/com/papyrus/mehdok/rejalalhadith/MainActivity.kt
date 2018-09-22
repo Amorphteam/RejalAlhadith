@@ -13,10 +13,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        DataRepositoryImpl.getInstance().getRejals(5)
+        DataRepositoryImpl.getInstance().getRejals(0, "الحسين")
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ rejals ->
+                    Log.w("MainActivity", "count: ${rejals.count()}")
                     rejals.forEach {
                         Log.w("MainActivity", "id: ${it.ID}")
                     }

@@ -66,4 +66,22 @@ class DataRepositoryImpl private constructor() : DataRepository {
             subscriber.onComplete()
         }
     }
+
+    override fun getRejals(page: Int, keyword: String): Observable<List<RejalLink>> {
+        return Observable.create { subscriber ->
+            val start = page * pageLimitCount
+
+            val list = SQLite.select()
+                    .from(RejalLink::class.java)
+                    .where(RejalLink_Table.name.like("%$keyword%"))
+                    .or(RejalLink_Table.name2.like("%$keyword%"))
+                    .or(RejalLink_Table.det.like("%$keyword%"))
+                    .offset(start)
+                    .limit(pageLimitCount)
+                    .queryList()
+
+            subscriber.onNext(list)
+            subscriber.onComplete()
+        }
+    }
 }

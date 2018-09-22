@@ -15,6 +15,9 @@ class RejalLink : BaseModel {
     var name: String = ""
 
     @Column
+    var name2: String = ""
+
+    @Column
     var det: String = ""
 
     @Column
@@ -30,9 +33,10 @@ class RejalLink : BaseModel {
 
     }
 
-    constructor(id: Int, name: String, det: String, joz: Int, page: Int, harf: String) {
+    constructor(id: Int, name: String, name2: String, det: String, joz: Int, page: Int, harf: String) {
         this.ID = id
         this.name = name
+        this.name2 = name2
         this.det = det
         this.joz = joz
         this.page = page
