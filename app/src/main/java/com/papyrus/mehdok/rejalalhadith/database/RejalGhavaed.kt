@@ -17,9 +17,7 @@ class RejalGhavaed : BaseModel {
     @Column
     var text: String = ""
 
-    constructor() {
-
-    }
+    constructor()
 
     constructor(_id: Int, title: String, text: String) {
         this._id = _id

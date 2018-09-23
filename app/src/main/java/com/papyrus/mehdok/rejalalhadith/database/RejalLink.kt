@@ -29,9 +29,7 @@ class RejalLink : BaseModel {
     @Column
     var harf: String = ""
 
-    constructor() {
-
-    }
+    constructor()
 
     constructor(id: Int, name: String, name2: String, det: String, joz: Int, page: Int, harf: String) {
         this.ID = id
