@@ -4,7 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.main.tabrejal.RejalFragment"
-    android:background="#226932"
     >
+
+    <com.papyrus.mehdok.rejalalhadith.customviews.InfiniteRecyclerView
+        android:id="@+id/rejalRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        />
 
 </FrameLayout>

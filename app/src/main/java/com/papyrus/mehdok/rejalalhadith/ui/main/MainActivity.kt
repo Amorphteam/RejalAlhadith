@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         bottomNavigation.setOnNavigationItemSelectedListener(this)
 
         // load first fragment
-        replaceFragment(RejalFragment.newInstance("", ""))
+        replaceFragment(RejalFragment.newInstance())
     }
 
     override fun onBackPressed() {
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             R.id.bottom_bar_tab1 -> {
-                replaceFragment(RejalFragment.newInstance("", ""))
+                replaceFragment(RejalFragment.newInstance())
             }
             R.id.bottom_bar_tab2 -> {
                 replaceFragment(GhavaedFragment.newInstance("", ""))
