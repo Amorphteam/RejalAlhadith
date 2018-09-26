@@ -2,7 +2,6 @@ package com.papyrus.mehdok.rejalalhadith.ui.main.tabrejal
 
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -12,6 +11,7 @@ import android.view.ViewGroup
 import com.papyrus.mehdok.rejalalhadith.R
 import com.papyrus.mehdok.rejalalhadith.customviews.InfiniteScrollListener
 import com.papyrus.mehdok.rejalalhadith.database.DataRepositoryImpl
+import com.papyrus.mehdok.rejalalhadith.ui.main.OnTabItemClickListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -19,9 +19,10 @@ import kotlinx.android.synthetic.main.fragment_rejal.*
 import java.util.*
 
 class RejalFragment : Fragment(), InfiniteScrollListener {
+    private var listener: OnTabItemClickListener? = null
+
     private val subscriptions: CompositeDisposable = CompositeDisposable()
 
-    private var listener: OnFragmentInteractionListener? = null
     private var adapter: RejalAdapter? = null
 
     private var pageCount = 1
@@ -56,10 +57,8 @@ class RejalFragment : Fragment(), InfiniteScrollListener {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
+        if (context is OnTabItemClickListener) {
             listener = context
-        } else {
-//            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
         }
     }
 
@@ -69,11 +68,6 @@ class RejalFragment : Fragment(), InfiniteScrollListener {
 
         subscriptions.clear()
         subscriptions.dispose()
-    }
-
-    interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
     }
 
     override fun loadMoreContent(page: Int) {

@@ -19,7 +19,8 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
-        BottomNavigationView.OnNavigationItemSelectedListener, FloatingSearchView.OnMenuItemClickListener, FloatingSearchView.OnQueryChangeListener {
+        BottomNavigationView.OnNavigationItemSelectedListener, FloatingSearchView.OnMenuItemClickListener,
+        FloatingSearchView.OnQueryChangeListener, OnTabItemClickListener {
 
     var firstFragment: RejalFragment? = null
     var secondFragment: GhavaedFragment? = null
@@ -126,5 +127,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         firstFragment?.searchRejals(query)
+    }
+
+    override fun onItemClicked() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
