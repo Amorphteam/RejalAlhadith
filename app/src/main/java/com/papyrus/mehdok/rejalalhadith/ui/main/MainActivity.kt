@@ -11,6 +11,9 @@ import android.view.MenuItem
 import android.view.View
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.papyrus.mehdok.rejalalhadith.R
+import com.papyrus.mehdok.rejalalhadith.database.Bookmark
+import com.papyrus.mehdok.rejalalhadith.database.RejalGhavaed
+import com.papyrus.mehdok.rejalalhadith.database.RejalLink
 import com.papyrus.mehdok.rejalalhadith.ui.main.tabbookmark.BookmarkFragment
 import com.papyrus.mehdok.rejalalhadith.ui.main.tabghavaed.GhavaedFragment
 import com.papyrus.mehdok.rejalalhadith.ui.main.tabrejal.RejalFragment
@@ -129,7 +132,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         firstFragment?.searchRejals(query)
     }
 
-    override fun onItemClicked() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onItemClicked(rejal: RejalLink) {
+        Log.e("MainActivity", "onItemClicked(rejal")
+    }
+
+    override fun onItemClicked(ghavaed: RejalGhavaed) {
+        Log.e("MainActivity", "onItemClicked(ghavaed")
+    }
+
+    override fun onItemClicked(bookmark: Bookmark) {
+        Log.e("MainActivity", "onItemClicked(bookmark")
     }
 }

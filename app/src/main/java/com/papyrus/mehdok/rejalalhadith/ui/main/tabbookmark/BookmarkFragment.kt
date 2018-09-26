@@ -38,7 +38,7 @@ class BookmarkFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         bookmarkRecycler.setHasFixedSize(false)
-        adapter = BookmarkAdapter(ArrayList())
+        adapter = BookmarkAdapter(ArrayList(), listener)
         val layoutManager = LinearLayoutManager(context)
         bookmarkRecycler.layoutManager = layoutManager
         bookmarkRecycler.adapter = adapter

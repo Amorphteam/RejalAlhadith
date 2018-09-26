@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.papyrus.mehdok.rejalalhadith.R
 import com.papyrus.mehdok.rejalalhadith.database.RejalGhavaed
+import com.papyrus.mehdok.rejalalhadith.ui.main.OnTabItemClickListener
 
-class GhavaedAdapter(private val ghavaed: MutableList<RejalGhavaed>) : RecyclerView.Adapter<GhavaedAdapter.ViewHolder>() {
-
+class GhavaedAdapter(private val ghavaed: MutableList<RejalGhavaed>, private var listener: OnTabItemClickListener?) : RecyclerView.Adapter<GhavaedAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_rejal, parent, false)
-        return GhavaedAdapter.ViewHolder(v)
+        return ViewHolder(v)
     }
 
     override fun getItemCount(): Int {
@@ -23,11 +23,16 @@ class GhavaedAdapter(private val ghavaed: MutableList<RejalGhavaed>) : RecyclerV
         holder.rejalTitle.text = ghavaed[position].title
     }
 
-    public class ViewHolder : RecyclerView.ViewHolder {
+    inner class ViewHolder : RecyclerView.ViewHolder, View.OnClickListener {
         val rejalTitle: TextView
 
         constructor(itemView: View) : super(itemView) {
+            itemView.setOnClickListener(this)
             rejalTitle = itemView.findViewById(R.id.rejalName)
+        }
+
+        override fun onClick(p0: View?) {
+            listener?.onItemClicked(ghavaed[adapterPosition])
         }
     }
 

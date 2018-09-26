@@ -52,7 +52,7 @@ class GhavaedFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         ghavaedRecycler.setHasFixedSize(true)
-        adapter = GhavaedAdapter(ArrayList())
+        adapter = GhavaedAdapter(ArrayList(), listener)
         val layoutManager = LinearLayoutManager(context)
         ghavaedRecycler.layoutManager = layoutManager
         ghavaedRecycler.adapter = adapter

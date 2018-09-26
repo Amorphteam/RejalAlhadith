@@ -47,7 +47,7 @@ class RejalFragment : Fragment(), InfiniteScrollListener {
 
         rejalRecycler.infiniteScrollListener = this
         rejalRecycler.setHasFixedSize(false)
-        adapter = RejalAdapter(ArrayList())
+        adapter = RejalAdapter(ArrayList(), listener)
         val layoutManager = LinearLayoutManager(context)
         rejalRecycler.layoutManager = layoutManager
         rejalRecycler.adapter = adapter
