@@ -27,6 +27,10 @@
             android:label="@string/title_activity_text_viewer"
             android:theme="@style/AppTheme.NoActionBar"
             >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.papyrus.mehdok.rejalalhadith.ui.main.MainActivity"
+                />
         </activity>
     </application>
 
