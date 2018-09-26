@@ -14,13 +14,29 @@
         android:theme="@style/AppTheme.AppBarOverlay"
         >
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <!--<android.support.v7.widget.Toolbar-->
+        <!--android:id="@+id/toolbar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="?attr/actionBarSize"-->
+        <!--android:background="?attr/colorPrimary"-->
+        <!--app:popupTheme="@style/AppTheme.PopupOverlay"-->
+        <!--/>-->
+
+        <com.arlib.floatingsearchview.FloatingSearchView
+            android:id="@+id/searchView"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
+            android:layout_height="match_parent"
+            app:floatingSearch_searchBarMarginLeft="16dp"
+            app:floatingSearch_searchBarMarginTop="16dp"
+            app:floatingSearch_searchBarMarginRight="16dp"
+            app:floatingSearch_searchHint="Search..."
+            app:floatingSearch_suggestionsListAnimDuration="250"
+            app:floatingSearch_showSearchKey="false"
+            app:floatingSearch_leftActionMode="showHamburger"
+            app:floatingSearch_menu="@menu/main"
+            app:floatingSearch_close_search_on_keyboard_dismiss="true"
             />
+
 
     </android.support.design.widget.AppBarLayout>
 

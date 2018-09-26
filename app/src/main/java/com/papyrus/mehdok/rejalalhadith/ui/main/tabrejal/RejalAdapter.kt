@@ -35,4 +35,9 @@ class RejalAdapter(private val rejals: MutableList<RejalLink>) : RecyclerView.Ad
         this.rejals.addAll(items)
         notifyDataSetChanged()
     }
+
+    fun removeAllItem() {
+        this.rejals.clear()
+        notifyDataSetChanged()
+    }
 }

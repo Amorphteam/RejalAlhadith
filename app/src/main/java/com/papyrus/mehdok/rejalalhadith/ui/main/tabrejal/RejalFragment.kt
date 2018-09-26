@@ -27,6 +27,9 @@ class RejalFragment : Fragment(), InfiniteScrollListener {
     private var pageCount = 1
     private var loading = false
 
+    private var isSearching = false
+    private var searchQuery = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {}
@@ -75,7 +78,11 @@ class RejalFragment : Fragment(), InfiniteScrollListener {
 
     override fun loadMoreContent(page: Int) {
         if (!loading) {
-            loadRejals(++pageCount)
+            if (isSearching) {
+                searchRejals(searchQuery, ++pageCount)
+            } else {
+                loadRejals(++pageCount)
+            }
         }
     }
 
@@ -97,6 +104,42 @@ class RejalFragment : Fragment(), InfiniteScrollListener {
                         })
         )
 
+    }
+
+    fun searchRejals(query: String, page: Int = 1) {
+        searchQuery = query
+
+        if (page == 1) {
+            // if it is first search attempt clear all items
+            adapter?.removeAllItem()
+        }
+
+        if (query.isEmpty()) {
+            isSearching = false
+            loading = false
+            pageCount = 1
+            loadRejals(pageCount)
+            return
+        }
+
+        pageCount = page
+        isSearching = true
+        loading = true
+
+        subscriptions.add(
+                DataRepositoryImpl
+                        .getInstance()
+                        .getRejals(pageCount, query)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ rejals ->
+                            adapter?.addItems(rejals)
+
+                            loading = false
+                        }, { e ->
+                            e.printStackTrace()
+                        })
+        )
     }
 
     companion object {
