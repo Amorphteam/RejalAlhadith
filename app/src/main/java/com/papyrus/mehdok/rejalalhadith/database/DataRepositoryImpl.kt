@@ -1,6 +1,7 @@
 package com.papyrus.mehdok.rejalalhadith.database
 
 import com.raizlabs.android.dbflow.sql.language.SQLite
+import io.reactivex.Completable
 import io.reactivex.Observable
 
 class DataRepositoryImpl private constructor() : DataRepository {
@@ -84,4 +85,50 @@ class DataRepositoryImpl private constructor() : DataRepository {
             subscriber.onComplete()
         }
     }
+
+    override fun getRejal(id: Int): Observable<RejalLink?> {
+        return Observable.create { subscriber ->
+            val rejal = SQLite.select()
+                    .from(RejalLink::class.java)
+                    .where(RejalLink_Table.ID.`is`(id))
+                    .querySingle()
+
+            subscriber.onNext(rejal!!)
+            subscriber.onComplete()
+        }
+    }
+
+    override fun addBookmark(bookmark: Bookmark): Completable {
+        return Completable.create { subscriber ->
+            run {
+                bookmark.save()
+                subscriber.onComplete()
+            }
+        }
+
+    }
+
+    override fun deleteBookmark(id: Int): Completable {
+        return Completable.create { subscriber ->
+            run {
+                SQLite.delete().from(Bookmark::class.java)
+                        .where(Bookmark_Table._id.`is`(id))
+                        .execute()
+                subscriber.onComplete()
+            }
+        }
+    }
+
+    override fun getBookmarkList(): Observable<List<Bookmark>> {
+        return Observable.create { subscriber ->
+            val list = SQLite.select()
+                    .from(Bookmark::class.java)
+                    .queryList()
+
+            subscriber.onNext(list)
+            subscriber.onComplete()
+        }
+    }
+
+
 }
