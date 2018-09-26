@@ -1,5 +1,6 @@
 package com.papyrus.mehdok.rejalalhadith.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.NavigationView
@@ -17,6 +18,7 @@ import com.papyrus.mehdok.rejalalhadith.database.RejalLink
 import com.papyrus.mehdok.rejalalhadith.ui.main.tabbookmark.BookmarkFragment
 import com.papyrus.mehdok.rejalalhadith.ui.main.tabghavaed.GhavaedFragment
 import com.papyrus.mehdok.rejalalhadith.ui.main.tabrejal.RejalFragment
+import com.papyrus.mehdok.rejalalhadith.ui.viewer.TextViewer
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -134,13 +136,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onItemClicked(rejal: RejalLink) {
         Log.e("MainActivity", "onItemClicked(rejal")
+        // todo create bundle with parcelable item
+        val bundle = Bundle()
+        startTextViewer(bundle)
     }
 
     override fun onItemClicked(ghavaed: RejalGhavaed) {
         Log.e("MainActivity", "onItemClicked(ghavaed")
+        // todo create bundle with parcelable item
+        val bundle = Bundle()
+        startTextViewer(bundle)
     }
 
     override fun onItemClicked(bookmark: Bookmark) {
         Log.e("MainActivity", "onItemClicked(bookmark")
+        // todo create bundle with parcelable item
+        val bundle = Bundle()
+        startTextViewer(bundle)
+    }
+
+    fun startTextViewer(bundle: Bundle) {
+        val intent = Intent(this, TextViewer::class.java)
+        intent.replaceExtras(bundle)
+        startActivity(intent)
     }
 }
