@@ -4,7 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.main.tabbookmark.BookmarkFragment"
-    android:background="#1e2d84"
     >
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/bookmarkRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 </FrameLayout>

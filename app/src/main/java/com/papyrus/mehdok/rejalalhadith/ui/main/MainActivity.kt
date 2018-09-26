@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // load first fragment
         firstFragment = RejalFragment.newInstance()
         secondFragment = GhavaedFragment.newInstance()
-        thirdFragment = BookmarkFragment.newInstance("", "")
+        thirdFragment = BookmarkFragment.newInstance()
 
         replaceFragment(firstFragment!!)
     }
