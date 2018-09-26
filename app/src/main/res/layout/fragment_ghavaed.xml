@@ -4,8 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.main.tabghavaed.GhavaedFragment"
-    android:background="#693522"
     >
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/ghavaedRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 
 </FrameLayout>
