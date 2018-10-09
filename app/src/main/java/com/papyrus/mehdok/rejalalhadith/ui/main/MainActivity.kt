@@ -19,6 +19,7 @@ import com.papyrus.mehdok.rejalalhadith.ui.main.tabbookmark.BookmarkFragment
 import com.papyrus.mehdok.rejalalhadith.ui.main.tabghavaed.GhavaedFragment
 import com.papyrus.mehdok.rejalalhadith.ui.main.tabrejal.RejalFragment
 import com.papyrus.mehdok.rejalalhadith.ui.viewer.TextViewer
+import com.papyrus.mehdok.rejalalhadith.utils.Constants
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -135,23 +136,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onItemClicked(rejal: RejalLink) {
-        Log.e("MainActivity", "onItemClicked(rejal")
-        // todo create bundle with parcelable item
         val bundle = Bundle()
+        bundle.putParcelable(Constants.EXTRA_REJAL_LINK, rejal)
+        bundle.putSerializable(Constants.EXTRA_VIEWER_TYPE, TextViewer.ViewerType.Rejal)
         startTextViewer(bundle)
     }
 
     override fun onItemClicked(ghavaed: RejalGhavaed) {
-        Log.e("MainActivity", "onItemClicked(ghavaed")
-        // todo create bundle with parcelable item
         val bundle = Bundle()
+        bundle.putParcelable(Constants.EXTRA_GHAVAED_LINK, ghavaed)
+        bundle.putSerializable(Constants.EXTRA_VIEWER_TYPE, TextViewer.ViewerType.Ghavaed)
         startTextViewer(bundle)
     }
 
     override fun onItemClicked(bookmark: Bookmark) {
-        Log.e("MainActivity", "onItemClicked(bookmark")
-        // todo create bundle with parcelable item
         val bundle = Bundle()
+        bundle.putParcelable(Constants.EXTRA_BOOKMARK, bookmark)
+        bundle.putSerializable(Constants.EXTRA_VIEWER_TYPE, TextViewer.ViewerType.Bookmark)
         startTextViewer(bundle)
     }
 

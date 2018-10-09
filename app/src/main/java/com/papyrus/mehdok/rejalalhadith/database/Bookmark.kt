@@ -8,7 +8,7 @@ import com.raizlabs.android.dbflow.annotation.Table
 import com.raizlabs.android.dbflow.structure.BaseModel
 
 @Table(database = BookmarkDatabase::class, name = "bookmark")
-class Bookmark : BaseModel(), Parcelable {
+class Bookmark : BaseModel, Parcelable {
     @Column
     @PrimaryKey(autoincrement = true)
     var _id: Int = 0
@@ -21,6 +21,8 @@ class Bookmark : BaseModel(), Parcelable {
 
     @Column
     var bookmarkId: Int = 0 // id in rejal table
+
+    constructor()
 
     constructor(_id: Int, bookmarkTitle: String, bookmarkText: String, bookmarkId: Int) : super() {
         this._id = _id
