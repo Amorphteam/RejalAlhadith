@@ -34,6 +34,8 @@ class TextViewer : AppCompatActivity() {
     var ghavaedList: List<RejalGhavaed>? = null
     var bookmarkList: List<Bookmark>? = null
 
+    var curerntFontSize: Int = 20 // px
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_text_viewer)
@@ -69,7 +71,7 @@ class TextViewer : AppCompatActivity() {
         }
     }
 
-    private fun showItemIn(index: Int) {
+    private fun showItemIn(index: Int, fontSize: Int = curerntFontSize) {
         when (type) {
             TextViewer.ViewerType.Rejal -> {
                 if (index < 0) {
@@ -82,7 +84,7 @@ class TextViewer : AppCompatActivity() {
                 }
 
                 currentIndex = index
-                showRejal(rejalList!![index])
+                showRejal(rejalList!![index], fontSize)
             }
             TextViewer.ViewerType.Ghavaed -> {
                 if (index < 0) {
@@ -95,7 +97,7 @@ class TextViewer : AppCompatActivity() {
                 }
 
                 currentIndex = index
-                showGhavaed(ghavaedList!![index])
+                showGhavaed(ghavaedList!![index], fontSize)
             }
             TextViewer.ViewerType.Bookmark -> {
                 if (index < 0) {
@@ -108,21 +110,21 @@ class TextViewer : AppCompatActivity() {
                 }
 
                 currentIndex = index
-                showBookmark(bookmarkList!![index])
+                showBookmark(bookmarkList!![index], fontSize)
             }
         }
     }
 
-    fun showRejal(rejal: RejalLink) {
+    fun showRejal(rejal: RejalLink, fontSize: Int) {
         name.text = rejal.name
-        webView.loadDataWithBaseURL(null, rejal.det, "text/html", "UTF-8", null)
+        content.loadDataWithBaseURL(null, getHTMLText(rejal.det, fontSize), "text/html", "UTF-8", null)
     }
 
-    fun showGhavaed(item: RejalGhavaed) {
+    fun showGhavaed(item: RejalGhavaed, fontSize: Int) {
 
     }
 
-    fun showBookmark(item: Bookmark) {
+    fun showBookmark(item: Bookmark, fontSize: Int) {
 
     }
 
@@ -176,6 +178,17 @@ class TextViewer : AppCompatActivity() {
                             this.finish()
                         })
         )
+    }
+
+    private fun getHTMLText(text: String, fontSize: Int): String {
+        var result = "<!DOCTYPE HTML>\n" +
+                "<html>" +
+                "<body text=\"red\" dir=\"rtl\" style=\"font-size:${fontSize}px\">" +
+                text +
+                "</body>\n" +
+                "</html>"
+
+        return result
     }
 
 }
