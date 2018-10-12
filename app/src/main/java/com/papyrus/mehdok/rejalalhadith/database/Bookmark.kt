@@ -31,6 +31,12 @@ class Bookmark : BaseModel, Parcelable {
         this.bookmarkId = bookmarkId
     }
 
+    constructor(bookmarkTitle: String, bookmarkText: String, bookmarkId: Int) : super() {
+        this.bookmarkTitle = bookmarkTitle
+        this.bookmarkText = bookmarkText
+        this.bookmarkId = bookmarkId
+    }
+
     constructor(parcel: Parcel) : this(
             parcel.readInt(),
             parcel.readString(),

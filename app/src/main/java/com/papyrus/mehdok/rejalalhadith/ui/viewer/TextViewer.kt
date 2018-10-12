@@ -15,6 +15,7 @@ import com.papyrus.mehdok.rejalalhadith.utils.Constants
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_text_viewer.*
 import kotlinx.android.synthetic.main.content_text_viewer.*
@@ -26,6 +27,8 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     public enum class ViewerType {
         Rejal, Ghavaed, Bookmark
     }
+
+    private var itemBookmark: MenuItem? = null
 
     var type = ViewerType.Rejal
 
@@ -76,6 +79,8 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     private fun showItemIn(index: Int, fontSize: Int = currentFontSize) {
         when (type) {
             TextViewer.ViewerType.Rejal -> {
+                itemBookmark?.isVisible = true
+
                 if (index < 0) {
                     showFirstPageMsg()
                     return
@@ -89,6 +94,8 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
                 showRejal(rejalList!![index], fontSize)
             }
             TextViewer.ViewerType.Ghavaed -> {
+                itemBookmark?.isVisible = false
+
                 if (index < 0) {
                     showFirstPageMsg()
                     return
@@ -102,6 +109,8 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
                 showGhavaed(ghavaedList!![index], fontSize)
             }
             TextViewer.ViewerType.Bookmark -> {
+                itemBookmark?.isVisible = false
+
                 if (index < 0) {
                     showFirstPageMsg()
                     return
@@ -120,6 +129,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     fun showRejal(rejal: RejalLink, fontSize: Int) {
         name.text = rejal.name
         content.loadDataWithBaseURL(null, getHTMLText(rejal.det, fontSize), "text/html", "UTF-8", null)
+        checkRejalBookmark()
     }
 
     fun showGhavaed(item: RejalGhavaed, fontSize: Int) {
@@ -141,6 +151,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_text_viewer, menu)
+        itemBookmark = menu.findItem(R.id.action_bookmark)
         return true
     }
 
@@ -155,6 +166,18 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
                 showStyleDialog()
                 return true
             }
+
+            R.id.action_bookmark -> {
+                if (isBookmarked(rejalList!![currentIndex])) {
+                    deBookmarkItem()
+                } else {
+                    bookmarkItem()
+                }
+            }
+
+            R.id.action_share -> {
+
+            }
         }
 
         return super.onOptionsItemSelected(item)
@@ -168,29 +191,34 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     private fun getAllRejalFromDB(rejal: RejalLink, filter: String) {
-        var rejals: Observable<List<RejalLink>>
-        if (filter.isEmpty()) {
-            rejals = DataRepositoryImpl
+        var rejals: Observable<List<RejalLink>> = if (filter.isEmpty()) {
+            DataRepositoryImpl
                     .getInstance()
                     .getRejals()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
         } else {
-            rejals = DataRepositoryImpl
+            DataRepositoryImpl
                     .getInstance()
                     .getRejals(filter)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
         }
 
         subscriptions.add(
-                rejals.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({ list ->
-                            rejalList = list
-                            currentIndex = rejalList!!.indexOf(rejal)
-                            showItemIn(currentIndex)
-                        }, { e ->
-                            e.printStackTrace()
-                            this.finish()
-                        })
+                Observable.zip(rejals, getBookmarkList(), BiFunction { t1: List<RejalLink>, t2: List<Bookmark> ->
+                    rejalList = t1
+                    currentIndex = rejalList!!.indexOf(rejal)
+                    bookmarkList = t2
+                    showItemIn(currentIndex)
+                }).subscribe()
         )
+    }
+
+    private fun getBookmarkList(): Observable<List<Bookmark>> {
+        return DataRepositoryImpl.getInstance().getBookmarkList()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
     }
 
     private fun showStyleDialog() {
@@ -222,6 +250,74 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
                 "</html>"
 
         return result
+    }
+
+    private fun checkRejalBookmark() {
+        if (bookmarkList == null || rejalList == null) {
+            return
+        }
+
+        if (isBookmarked(rejalList!![currentIndex])) {
+            itemBookmark?.setIcon(R.drawable.ic_star_white_36dp)
+        } else {
+            itemBookmark?.setIcon(R.drawable.ic_star_border_white_36dp)
+        }
+    }
+
+    private fun isBookmarked(rejal: RejalLink): Boolean {
+        if (bookmarkList == null) {
+            return false
+        }
+
+        for (bookmark in bookmarkList!!) {
+            if (rejal.ID == bookmark.bookmarkId) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    private fun refillBookmarkList() {
+        subscriptions.add(
+                getBookmarkList().subscribe({ list ->
+                    bookmarkList = list
+                    checkRejalBookmark()
+                }, { e ->
+                    e.printStackTrace()
+                })
+        )
+    }
+
+    private fun bookmarkItem() {
+        val rejal = rejalList!![currentIndex]
+        val bookmark = Bookmark(rejal.name, rejal.det, rejal.ID)
+
+        subscriptions.add(
+                DataRepositoryImpl.getInstance().addBookmark(bookmark)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            refillBookmarkList()
+                        }, { e ->
+                            e.printStackTrace()
+                        })
+        )
+    }
+
+    private fun deBookmarkItem() {
+        val rejal = rejalList!![currentIndex]
+
+        subscriptions.add(
+                DataRepositoryImpl.getInstance().deleteBookmark(rejal.ID)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            refillBookmarkList()
+                        }, { e ->
+                            e.printStackTrace()
+                        })
+        )
     }
 
 }
