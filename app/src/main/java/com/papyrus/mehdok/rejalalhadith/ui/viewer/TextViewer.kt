@@ -2,7 +2,6 @@ package com.papyrus.mehdok.rejalalhadith.ui.viewer
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -11,6 +10,7 @@ import com.papyrus.mehdok.rejalalhadith.database.Bookmark
 import com.papyrus.mehdok.rejalalhadith.database.DataRepositoryImpl
 import com.papyrus.mehdok.rejalalhadith.database.RejalGhavaed
 import com.papyrus.mehdok.rejalalhadith.database.RejalLink
+import com.papyrus.mehdok.rejalalhadith.ui.main.StyleDialog
 import com.papyrus.mehdok.rejalalhadith.utils.Constants
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -19,7 +19,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_text_viewer.*
 import kotlinx.android.synthetic.main.content_text_viewer.*
 
-class TextViewer : AppCompatActivity() {
+class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
 
     private val subscriptions: CompositeDisposable = CompositeDisposable()
 
@@ -34,7 +34,9 @@ class TextViewer : AppCompatActivity() {
     var ghavaedList: List<RejalGhavaed>? = null
     var bookmarkList: List<Bookmark>? = null
 
-    var curerntFontSize: Int = 20 // px
+    var currentFontSize: Int = 20 // px
+    val minTextSize = 10 //px
+    val maxTextSize = 50 //px
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +73,7 @@ class TextViewer : AppCompatActivity() {
         }
     }
 
-    private fun showItemIn(index: Int, fontSize: Int = curerntFontSize) {
+    private fun showItemIn(index: Int, fontSize: Int = currentFontSize) {
         when (type) {
             TextViewer.ViewerType.Rejal -> {
                 if (index < 0) {
@@ -143,7 +145,19 @@ class TextViewer : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return true
+        when (item.itemId) {
+            android.R.id.home -> {
+                super.onBackPressed()
+                return true
+            }
+
+            R.id.action_style -> {
+                showStyleDialog()
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onDestroy() {
@@ -171,13 +185,32 @@ class TextViewer : AppCompatActivity() {
                         .subscribe({ list ->
                             rejalList = list
                             currentIndex = rejalList!!.indexOf(rejal)
-                            Log.d("getAllRejalFromDB", "currentIndex: $currentIndex")
                             showItemIn(currentIndex)
                         }, { e ->
                             e.printStackTrace()
                             this.finish()
                         })
         )
+    }
+
+    private fun showStyleDialog() {
+        StyleDialog.newInstance(toolbar.height)
+                .setClickListener(this)
+                .show(supportFragmentManager, "TextViewerStyle")
+    }
+
+    override fun decreaseFontSize() {
+        if ((currentFontSize - 5) > minTextSize) {
+            currentFontSize -= 5
+            showItemIn(currentIndex, currentFontSize)
+        }
+    }
+
+    override fun increaseFontSize() {
+        if ((currentFontSize + 5) < maxTextSize) {
+            currentFontSize += 5
+            showItemIn(currentIndex, currentFontSize)
+        }
     }
 
     private fun getHTMLText(text: String, fontSize: Int): String {
