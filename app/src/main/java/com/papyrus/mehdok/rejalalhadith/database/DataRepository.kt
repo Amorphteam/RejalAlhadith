@@ -7,6 +7,7 @@ interface DataRepository {
     fun getRejals(): Observable<List<RejalLink>>
     fun getRejals(page: Int): Observable<List<RejalLink>>
     fun getRejals(page: Int, keyword: String): Observable<List<RejalLink>>
+    fun getRejals(keyword: String): Observable<List<RejalLink>>
     fun getRejal(id: Int): Observable<RejalLink?>
     fun getGhavaeds(): Observable<List<RejalGhavaed>>
     fun getGhavaeds(page: Int): Observable<List<RejalGhavaed>>

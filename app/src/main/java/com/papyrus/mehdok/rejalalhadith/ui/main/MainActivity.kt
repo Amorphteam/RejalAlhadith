@@ -135,9 +135,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         firstFragment?.searchRejals(query)
     }
 
-    override fun onItemClicked(rejal: RejalLink) {
+    override fun onItemClicked(rejal: RejalLink, filter: String) {
         val bundle = Bundle()
         bundle.putParcelable(Constants.EXTRA_REJAL_LINK, rejal)
+        bundle.putString(Constants.EXTRA_REJAL_FILTER, filter)
         bundle.putSerializable(Constants.EXTRA_VIEWER_TYPE, TextViewer.ViewerType.Rejal)
         startTextViewer(bundle)
     }

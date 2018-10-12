@@ -86,6 +86,21 @@ class DataRepositoryImpl private constructor() : DataRepository {
         }
     }
 
+    override fun getRejals(keyword: String): Observable<List<RejalLink>> {
+        return Observable.create { subscriber ->
+
+            val list = SQLite.select()
+                    .from(RejalLink::class.java)
+                    .where(RejalLink_Table.name.like("%$keyword%"))
+                    .or(RejalLink_Table.name2.like("%$keyword%"))
+                    .or(RejalLink_Table.det.like("%$keyword%"))
+                    .queryList()
+
+            subscriber.onNext(list)
+            subscriber.onComplete()
+        }
+    }
+
     override fun getRejal(id: Int): Observable<RejalLink?> {
         return Observable.create { subscriber ->
             val rejal = SQLite.select()

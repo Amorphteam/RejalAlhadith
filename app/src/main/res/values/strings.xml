@@ -7,4 +7,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_text_viewer">TextViewer</string>
+
+    <string name="first_item">This is the first Item in list</string>
+    <string name="last_item">This is the last Item in list</string>
 </resources>

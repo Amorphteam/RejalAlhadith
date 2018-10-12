@@ -10,6 +10,8 @@ import com.papyrus.mehdok.rejalalhadith.database.RejalLink
 import com.papyrus.mehdok.rejalalhadith.ui.main.OnTabItemClickListener
 
 class RejalAdapter(private val rejals: MutableList<RejalLink>, private var listener: OnTabItemClickListener?) : RecyclerView.Adapter<RejalAdapter.ViewHolder>() {
+    public var searchQuery = ""
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_rejal, parent, false)
         return ViewHolder(v)
@@ -32,7 +34,7 @@ class RejalAdapter(private val rejals: MutableList<RejalLink>, private var liste
         }
 
         override fun onClick(p0: View?) {
-            listener?.onItemClicked(rejals[adapterPosition])
+            listener?.onItemClicked(rejals[adapterPosition], searchQuery)
         }
     }
 

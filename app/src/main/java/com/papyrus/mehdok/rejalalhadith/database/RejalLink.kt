@@ -66,6 +66,34 @@ class RejalLink : BaseModel, Parcelable {
         return 0
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as RejalLink
+
+        if (ID != other.ID) return false
+        if (name != other.name) return false
+        if (name2 != other.name2) return false
+        if (det != other.det) return false
+        if (joz != other.joz) return false
+        if (page != other.page) return false
+        if (harf != other.harf) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = ID
+        result = 31 * result + name.hashCode()
+        result = 31 * result + name2.hashCode()
+        result = 31 * result + det.hashCode()
+        result = 31 * result + joz
+        result = 31 * result + page
+        result = 31 * result + harf.hashCode()
+        return result
+    }
+
     companion object CREATOR : Parcelable.Creator<RejalLink> {
         override fun createFromParcel(parcel: Parcel): RejalLink {
             return RejalLink(parcel)
@@ -75,4 +103,6 @@ class RejalLink : BaseModel, Parcelable {
             return arrayOfNulls(size)
         }
     }
+
+
 }

@@ -25,7 +25,7 @@ class RejalFragment : Fragment(), InfiniteScrollListener {
 
     private var adapter: RejalAdapter? = null
 
-    private var pageCount = 1
+    private var pageCount = 0
     private var loading = false
 
     private var isSearching = false
@@ -52,7 +52,7 @@ class RejalFragment : Fragment(), InfiniteScrollListener {
         rejalRecycler.layoutManager = layoutManager
         rejalRecycler.adapter = adapter
 
-        loadRejals(1)
+        loadRejals(0)
     }
 
     override fun onAttach(context: Context) {
@@ -100,10 +100,11 @@ class RejalFragment : Fragment(), InfiniteScrollListener {
 
     }
 
-    fun searchRejals(query: String, page: Int = 1) {
+    fun searchRejals(query: String, page: Int = 0) {
         searchQuery = query
+        adapter?.searchQuery = query
 
-        if (page == 1) {
+        if (page == 0) {
             // if it is first search attempt clear all items
             adapter?.removeAllItem()
         }
@@ -111,7 +112,7 @@ class RejalFragment : Fragment(), InfiniteScrollListener {
         if (query.isEmpty()) {
             isSearching = false
             loading = false
-            pageCount = 1
+            pageCount = 0
             loadRejals(pageCount)
             return
         }

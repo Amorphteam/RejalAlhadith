@@ -2,32 +2,51 @@ package com.papyrus.mehdok.rejalalhadith.ui.viewer
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import com.papyrus.mehdok.rejalalhadith.R
 import com.papyrus.mehdok.rejalalhadith.database.Bookmark
+import com.papyrus.mehdok.rejalalhadith.database.DataRepositoryImpl
 import com.papyrus.mehdok.rejalalhadith.database.RejalGhavaed
 import com.papyrus.mehdok.rejalalhadith.database.RejalLink
 import com.papyrus.mehdok.rejalalhadith.utils.Constants
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_text_viewer.*
 import kotlinx.android.synthetic.main.content_text_viewer.*
 
 class TextViewer : AppCompatActivity() {
+
+    private val subscriptions: CompositeDisposable = CompositeDisposable()
 
     public enum class ViewerType {
         Rejal, Ghavaed, Bookmark
     }
 
     var type = ViewerType.Rejal
-    var passedRejal: RejalLink? = null
-    var passedGhavaed: RejalGhavaed? = null
-    var passedBookmark: Bookmark? = null
+
+    var currentIndex = 0
+    var rejalList: List<RejalLink>? = null
+    var ghavaedList: List<RejalGhavaed>? = null
+    var bookmarkList: List<Bookmark>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_text_viewer)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        nextItem.setOnClickListener {
+            showItemIn(currentIndex + 1)
+        }
+
+        prevItem.setOnClickListener {
+            showItemIn(currentIndex - 1)
+        }
 
         getExtraData()
     }
@@ -37,21 +56,82 @@ class TextViewer : AppCompatActivity() {
 
         when (type) {
             ViewerType.Rejal -> {
-                passedRejal = intent.extras.getParcelable(Constants.EXTRA_REJAL_LINK)
-                showRejal(passedRejal)
+                val passedRejal: RejalLink = intent.extras.getParcelable(Constants.EXTRA_REJAL_LINK)
+                val rejalFilter = intent.extras.getString(Constants.EXTRA_REJAL_FILTER)
+                getAllRejalFromDB(passedRejal, rejalFilter)
             }
             ViewerType.Ghavaed -> {
-                passedGhavaed = intent.extras.getParcelable(Constants.EXTRA_GHAVAED_LINK)
+                val passedGhavaed: RejalGhavaed = intent.extras.getParcelable(Constants.EXTRA_GHAVAED_LINK)
             }
             ViewerType.Bookmark -> {
-                passedBookmark = intent.extras.getParcelable(Constants.EXTRA_BOOKMARK)
+                val passedBookmark: Bookmark = intent.extras.getParcelable(Constants.EXTRA_BOOKMARK)
             }
         }
     }
 
-    fun showRejal(rejal: RejalLink?) {
-        name.text = rejal?.name
-        webView.loadDataWithBaseURL(null, rejal?.det, "text/html", "UTF-8", null)
+    private fun showItemIn(index: Int) {
+        when (type) {
+            TextViewer.ViewerType.Rejal -> {
+                if (index < 0) {
+                    showFirstPageMsg()
+                    return
+                }
+                if (index >= rejalList!!.count()) {
+                    showLastPageMsg()
+                    return
+                }
+
+                currentIndex = index
+                showRejal(rejalList!![index])
+            }
+            TextViewer.ViewerType.Ghavaed -> {
+                if (index < 0) {
+                    showFirstPageMsg()
+                    return
+                }
+                if (index >= ghavaedList!!.count()) {
+                    showLastPageMsg()
+                    return
+                }
+
+                currentIndex = index
+                showGhavaed(ghavaedList!![index])
+            }
+            TextViewer.ViewerType.Bookmark -> {
+                if (index < 0) {
+                    showFirstPageMsg()
+                    return
+                }
+                if (index >= bookmarkList!!.count()) {
+                    showLastPageMsg()
+                    return
+                }
+
+                currentIndex = index
+                showBookmark(bookmarkList!![index])
+            }
+        }
+    }
+
+    fun showRejal(rejal: RejalLink) {
+        name.text = rejal.name
+        webView.loadDataWithBaseURL(null, rejal.det, "text/html", "UTF-8", null)
+    }
+
+    fun showGhavaed(item: RejalGhavaed) {
+
+    }
+
+    fun showBookmark(item: Bookmark) {
+
+    }
+
+    fun showFirstPageMsg() {
+        Toast.makeText(this, R.string.first_item, Toast.LENGTH_SHORT).show()
+    }
+
+    fun showLastPageMsg() {
+        Toast.makeText(this, R.string.last_item, Toast.LENGTH_SHORT).show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -62,6 +142,40 @@ class TextViewer : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return true
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        subscriptions.clear()
+        subscriptions.dispose()
+    }
+
+    private fun getAllRejalFromDB(rejal: RejalLink, filter: String) {
+        var rejals: Observable<List<RejalLink>>
+        if (filter.isEmpty()) {
+            rejals = DataRepositoryImpl
+                    .getInstance()
+                    .getRejals()
+        } else {
+            rejals = DataRepositoryImpl
+                    .getInstance()
+                    .getRejals(filter)
+        }
+
+        subscriptions.add(
+                rejals.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ list ->
+                            rejalList = list
+                            currentIndex = rejalList!!.indexOf(rejal)
+                            Log.d("getAllRejalFromDB", "currentIndex: $currentIndex")
+                            showItemIn(currentIndex)
+                        }, { e ->
+                            e.printStackTrace()
+                            this.finish()
+                        })
+        )
     }
 
 }
