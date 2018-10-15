@@ -2,6 +2,7 @@ package com.papyrus.mehdok.rejalalhadith.ui.viewer
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -72,11 +73,13 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
             }
             ViewerType.Bookmark -> {
                 val passedBookmark: Bookmark = intent.extras.getParcelable(Constants.EXTRA_BOOKMARK)
+                getAllBookmarkFromDB(passedBookmark)
             }
         }
     }
 
     private fun showItemIn(index: Int, fontSize: Int = currentFontSize) {
+        Log.d("showItemIn", "index: $index type: $type")
         when (type) {
             TextViewer.ViewerType.Rejal -> {
                 itemBookmark?.isVisible = true
@@ -137,7 +140,8 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     fun showBookmark(item: Bookmark, fontSize: Int) {
-
+        name.text = item.bookmarkTitle
+        content.loadDataWithBaseURL(null, getHTMLText(item.bookmarkText, fontSize), "text/html", "UTF-8", null)
     }
 
     fun showFirstPageMsg() {
@@ -152,6 +156,12 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_text_viewer, menu)
         itemBookmark = menu.findItem(R.id.action_bookmark)
+
+        when (type) {
+            TextViewer.ViewerType.Rejal -> itemBookmark?.isVisible = true
+            TextViewer.ViewerType.Ghavaed -> itemBookmark?.isVisible = false
+            TextViewer.ViewerType.Bookmark -> itemBookmark?.isVisible = false
+        }
         return true
     }
 
@@ -212,6 +222,20 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
                     bookmarkList = t2
                     showItemIn(currentIndex)
                 }).subscribe()
+        )
+    }
+
+    private fun getAllBookmarkFromDB(bookmark: Bookmark) {
+        subscriptions.add(
+                getBookmarkList()
+                        .subscribe({ bookmarks ->
+                            bookmarkList = bookmarks
+                            currentIndex = bookmarkList!!.indexOf(bookmark)
+                            showItemIn(currentIndex)
+                        }, { e ->
+                            e.printStackTrace()
+                            this.finish()
+                        })
         )
     }
 
