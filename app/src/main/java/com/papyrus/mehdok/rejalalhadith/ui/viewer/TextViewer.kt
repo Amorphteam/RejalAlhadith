@@ -70,6 +70,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
             }
             ViewerType.Ghavaed -> {
                 val passedGhavaed: RejalGhavaed = intent.extras.getParcelable(Constants.EXTRA_GHAVAED_LINK)
+                getAllGhavaedFromDB(passedGhavaed)
             }
             ViewerType.Bookmark -> {
                 val passedBookmark: Bookmark = intent.extras.getParcelable(Constants.EXTRA_BOOKMARK)
@@ -136,7 +137,8 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     fun showGhavaed(item: RejalGhavaed, fontSize: Int) {
-
+        name.text = item.title
+        content.loadDataWithBaseURL(null, getHTMLText(item.text, fontSize), "text/html", "UTF-8", null)
     }
 
     fun showBookmark(item: Bookmark, fontSize: Int) {
@@ -201,7 +203,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     private fun getAllRejalFromDB(rejal: RejalLink, filter: String) {
-        var rejals: Observable<List<RejalLink>> = if (filter.isEmpty()) {
+        val rejals: Observable<List<RejalLink>> = if (filter.isEmpty()) {
             DataRepositoryImpl
                     .getInstance()
                     .getRejals()
@@ -234,6 +236,22 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
                             showItemIn(currentIndex)
                         }, { e ->
                             e.printStackTrace()
+                            this.finish()
+                        })
+        )
+    }
+
+    private fun getAllGhavaedFromDB(ghavaed: RejalGhavaed) {
+        subscriptions.add(
+                DataRepositoryImpl.getInstance().getGhavaeds()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            ghavaedList = it
+                            currentIndex = ghavaedList!!.indexOf(ghavaed)
+                            showItemIn(currentIndex)
+                        }, {
+                            it.printStackTrace()
                             this.finish()
                         })
         )
