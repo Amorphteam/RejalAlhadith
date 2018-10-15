@@ -1,5 +1,6 @@
 package com.papyrus.mehdok.rejalalhadith.ui.viewer
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -20,6 +21,7 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_text_viewer.*
 import kotlinx.android.synthetic.main.content_text_viewer.*
+
 
 class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
 
@@ -188,7 +190,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
             }
 
             R.id.action_share -> {
-
+                shareCurrentText()
             }
         }
 
@@ -360,6 +362,30 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
                             e.printStackTrace()
                         })
         )
+    }
+
+    private fun shareCurrentText() {
+        val appInfo = "The text copied from rejal alhadith app"
+        val shareBody: String
+        shareBody = when (type) {
+            TextViewer.ViewerType.Rejal -> {
+                val rejal = rejalList!![currentIndex]
+                "${rejal.name} \n${rejal.det} \n $appInfo"
+            }
+            TextViewer.ViewerType.Ghavaed -> {
+                val ghavaed = ghavaedList!![currentIndex]
+                "${ghavaed.title} \n${ghavaed.text} \n$appInfo"
+            }
+            TextViewer.ViewerType.Bookmark -> {
+                val bookmark = bookmarkList!![currentIndex]
+                "${bookmark.bookmarkTitle} \n${bookmark.bookmarkText} \n$appInfo"
+            }
+        }
+        val sharingIntent = Intent(android.content.Intent.ACTION_SEND)
+        sharingIntent.type = "text/plain"
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Share")
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody)
+        startActivity(Intent.createChooser(sharingIntent, "Share"))
     }
 
 }
