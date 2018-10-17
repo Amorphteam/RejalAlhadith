@@ -133,7 +133,8 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     fun showRejal(rejal: RejalLink, fontSize: Int) {
-        name.text = rejal.name
+        val dd = "رجال النجاشي " + rejal.joz + ": " + rejal.page + " / " + rejal.harf
+        name.text = dd
         toolbar.title = rejal.name
         content.loadDataWithBaseURL(null, getHTMLText(rejal.det, fontSize), "text/html", "UTF-8", null)
         checkRejalBookmark()
@@ -146,7 +147,8 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     fun showBookmark(item: Bookmark, fontSize: Int) {
-        name.text = item.bookmarkTitle
+        val dd = "رجال النجاشي " + item.joz + ": " + item.page + " / " + item.harf
+        name.text = dd
         toolbar.title = item.bookmarkTitle
         content.loadDataWithBaseURL(null, getHTMLText(item.bookmarkText, fontSize), "text/html", "UTF-8", null)
     }
@@ -338,7 +340,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
 
     private fun bookmarkItem() {
         val rejal = rejalList!![currentIndex]
-        val bookmark = Bookmark(rejal.name, rejal.det, rejal.ID)
+        val bookmark = Bookmark(rejal.name, rejal.det, rejal.ID, rejal.joz, rejal.page, rejal.harf)
 
         subscriptions.add(
                 DataRepositoryImpl.getInstance().addBookmark(bookmark)
