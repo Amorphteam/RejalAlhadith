@@ -134,17 +134,20 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
 
     fun showRejal(rejal: RejalLink, fontSize: Int) {
         name.text = rejal.name
+        toolbar.title = rejal.name
         content.loadDataWithBaseURL(null, getHTMLText(rejal.det, fontSize), "text/html", "UTF-8", null)
         checkRejalBookmark()
     }
 
     fun showGhavaed(item: RejalGhavaed, fontSize: Int) {
         name.text = item.title
+        toolbar.title = item.title
         content.loadDataWithBaseURL(null, getHTMLText(item.text, fontSize), "text/html", "UTF-8", null)
     }
 
     fun showBookmark(item: Bookmark, fontSize: Int) {
         name.text = item.bookmarkTitle
+        toolbar.title = item.bookmarkTitle
         content.loadDataWithBaseURL(null, getHTMLText(item.bookmarkText, fontSize), "text/html", "UTF-8", null)
     }
 
