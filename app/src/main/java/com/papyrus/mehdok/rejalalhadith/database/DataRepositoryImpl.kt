@@ -123,7 +123,7 @@ class DataRepositoryImpl private constructor() : DataRepository {
         return Completable.create { subscriber ->
             run {
                 SQLite.delete().from(Bookmark::class.java)
-                        .where(Bookmark_Table._id.`is`(id))
+                        .where(Bookmark_Table.bookmarkId.`is`(id))
                         .execute()
                 subscriber.onComplete()
             }
