@@ -13,6 +13,7 @@ import android.view.View
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.papyrus.mehdok.rejalalhadith.R
 import com.papyrus.mehdok.rejalalhadith.database.Bookmark
+import com.papyrus.mehdok.rejalalhadith.database.DataRepositoryImpl
 import com.papyrus.mehdok.rejalalhadith.database.RejalGhavaed
 import com.papyrus.mehdok.rejalalhadith.database.RejalLink
 import com.papyrus.mehdok.rejalalhadith.ui.main.tabbookmark.BookmarkFragment
@@ -20,6 +21,9 @@ import com.papyrus.mehdok.rejalalhadith.ui.main.tabghavaed.GhavaedFragment
 import com.papyrus.mehdok.rejalalhadith.ui.main.tabrejal.RejalFragment
 import com.papyrus.mehdok.rejalalhadith.ui.viewer.TextViewer
 import com.papyrus.mehdok.rejalalhadith.utils.Constants
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -31,6 +35,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var firstFragment: RejalFragment? = null
     var secondFragment: GhavaedFragment? = null
     var thirdFragment: BookmarkFragment? = null
+
+    private val subscriptions: CompositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,6 +120,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onDestroy() {
         super.onDestroy()
+
+        subscriptions.clear()
+        subscriptions.dispose()
+
         firstFragment = null
         secondFragment = null
         thirdFragment = null
@@ -155,6 +165,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         bundle.putParcelable(Constants.EXTRA_BOOKMARK, bookmark)
         bundle.putSerializable(Constants.EXTRA_VIEWER_TYPE, TextViewer.ViewerType.Bookmark)
         startTextViewer(bundle)
+    }
+
+    override fun onDeleteBookmark(bookmark: Bookmark) {
+        subscriptions.add(
+                DataRepositoryImpl.getInstance().deleteBookmark(bookmark.bookmarkId)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            // nop
+                        }, { e ->
+                            e.printStackTrace()
+                        })
+        )
     }
 
     fun startTextViewer(bundle: Bundle) {

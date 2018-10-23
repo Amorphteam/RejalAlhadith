@@ -5,7 +5,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 
 class DataRepositoryImpl private constructor() : DataRepository {
-    val pageLimitCount = 100
+    private val pageLimitCount = 100
 
     companion object {
         private val mInstance: DataRepositoryImpl = DataRepositoryImpl()
@@ -75,8 +75,6 @@ class DataRepositoryImpl private constructor() : DataRepository {
             val list = SQLite.select()
                     .from(RejalLink::class.java)
                     .where(RejalLink_Table.name.like("%$keyword%"))
-                    .or(RejalLink_Table.name2.like("%$keyword%"))
-                    .or(RejalLink_Table.det.like("%$keyword%"))
                     .offset(start)
                     .limit(pageLimitCount)
                     .queryList()
@@ -92,8 +90,6 @@ class DataRepositoryImpl private constructor() : DataRepository {
             val list = SQLite.select()
                     .from(RejalLink::class.java)
                     .where(RejalLink_Table.name.like("%$keyword%"))
-                    .or(RejalLink_Table.name2.like("%$keyword%"))
-                    .or(RejalLink_Table.det.like("%$keyword%"))
                     .queryList()
 
             subscriber.onNext(list)
@@ -127,7 +123,7 @@ class DataRepositoryImpl private constructor() : DataRepository {
         return Completable.create { subscriber ->
             run {
                 SQLite.delete().from(Bookmark::class.java)
-                        .where(Bookmark_Table._id.`is`(id))
+                        .where(Bookmark_Table.bookmarkId.`is`(id))
                         .execute()
                 subscriber.onComplete()
             }
