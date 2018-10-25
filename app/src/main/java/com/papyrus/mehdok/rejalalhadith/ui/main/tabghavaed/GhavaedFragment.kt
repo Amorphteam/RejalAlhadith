@@ -13,6 +13,7 @@ import com.papyrus.mehdok.rejalalhadith.ui.main.OnTabItemClickListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_text_viewer.*
 import kotlinx.android.synthetic.main.fragment_ghavaed.*
 import java.util.*
 
@@ -32,6 +33,7 @@ class GhavaedFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_ghavaed, container, false)
+
     }
 
     override fun onAttach(context: Context) {

@@ -25,6 +25,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_text_viewer.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -42,10 +43,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
         searchView.attachNavigationDrawerToMenuButton(drawer_layout)
         searchView.setOnMenuItemClickListener(this)
         searchView.setOnQueryChangeListener(this)
-
         nav_view.setNavigationItemSelectedListener(this)
 
         //set bottom nav click listener

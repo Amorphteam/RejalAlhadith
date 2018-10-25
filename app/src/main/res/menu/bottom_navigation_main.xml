@@ -4,19 +4,19 @@
     <item
         android:id="@+id/bottom_bar_tab1"
         android:enabled="true"
-        android:icon="@mipmap/ic_launcher"
-        android:title="tab1"
+        android:icon="@drawable/ic_account"
+        android:title="قائمة الأسماء"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/bottom_bar_tab2"
         android:enabled="true"
-        android:icon="@mipmap/ic_launcher"
-        android:title="tab2"
+        android:icon="@drawable/ic_bookmark"
+        android:title="القواعد العامة"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/bottom_bar_tab3"
         android:enabled="true"
-        android:icon="@mipmap/ic_launcher"
-        android:title="tab3"
+        android:icon="@drawable/ic_star"
+        android:title="المفضلة"
         app:showAsAction="ifRoom"/>
 </menu>
