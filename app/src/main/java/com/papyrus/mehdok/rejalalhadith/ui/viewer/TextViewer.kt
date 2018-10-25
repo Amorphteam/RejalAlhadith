@@ -40,7 +40,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     var ghavaedList: List<RejalGhavaed>? = null
     var bookmarkList: List<Bookmark>? = null
 
-    var currentFontSize: Int = 20 // px
+    var currentFontSize: Int = 16 // px
     val minTextSize = 10 //px
     val maxTextSize = 50 //px
 
@@ -291,10 +291,24 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     private fun getHTMLText(text: String, fontSize: Int): String {
-        var result = "<!DOCTYPE HTML>\n" +
-                "<html>" +
-                "<body text=\"red\" dir=\"rtl\" style=\"font-size:${fontSize}px\">" +
-                text +
+        var result = "<html>\n" +
+                "<head>\n" +
+                "<style type=\"text/css\">\n" +
+                "@font-face {\n" +
+                "    font-family: MyFont;\n" +
+                "    src: url(\"file:///android_asset/droidkufi_regular.ttf\")\n" +
+                "}\n" +
+                "body {\n" +
+                "    font-family: MyFont;\n" +
+                "    text-align: justify;\n" +
+                "   direction: rtl; \n" +
+                "   font-size: ${fontSize}px;\n" +
+                "   color: #707070; \n"+
+                "}\n" +
+                "</style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+        text +
                 "</body>\n" +
                 "</html>"
 
