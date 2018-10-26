@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.papyrus.mehdok.rejalalhadith"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.papyrus.mehdok.rejalalhadith">
 
     <application
         android:name="org.masaha.rejalalhadith.RejalAlhadithApplication"
@@ -10,28 +9,26 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        >
+        android:theme="@style/AppTheme">
         <activity
             android:name="org.masaha.rejalalhadith.ui.main.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            >
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name="org.masaha.rejalalhadith.ui.viewer.TextViewer"
             android:label="@string/title_activity_text_viewer"
-            android:theme="@style/AppTheme.NoActionBar"
-            >
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.masaha.rejalalhadith.ui.main.MainActivity"
-                />
+                android:value="org.masaha.rejalalhadith.ui.main.MainActivity" />
         </activity>
+        <activity android:name="org.masaha.rejalalhadith.ui.main.About"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

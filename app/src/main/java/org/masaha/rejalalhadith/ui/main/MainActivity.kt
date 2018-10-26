@@ -30,7 +30,6 @@ import kotlinx.android.synthetic.main.content_main.*
 import android.widget.Toast
 
 
-
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
         BottomNavigationView.OnNavigationItemSelectedListener, FloatingSearchView.OnMenuItemClickListener,
         FloatingSearchView.OnQueryChangeListener, OnTabItemClickListener {
@@ -86,7 +85,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_about -> {
-                // Handle the camera action
+
+                val aboutUs = Intent (this, About::class.java)
+
+                startActivity(aboutUs)
+
             }
 
             R.id.nav_share -> {
