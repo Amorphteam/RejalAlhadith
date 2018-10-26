@@ -11,7 +11,7 @@ def dbflow_version = "4.2.4"
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.papyrus.mehdok.rejalalhadith"
+        applicationId "org.masaha.rejalalhadith"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
