@@ -1,6 +1,7 @@
 package org.masaha.rejalalhadith.ui.main
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.NavigationView
@@ -107,16 +108,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             R.id.nav_contact -> {
-                val i = Intent(Intent.ACTION_SEND)
-                i.type = "message/rfc822"
-                i.putExtra(Intent.EXTRA_EMAIL, arrayOf("info@masaha.org"))
-                i.putExtra(Intent.EXTRA_SUBJECT, "من تطبيق رجال الحديث")
-                i.putExtra(Intent.EXTRA_TEXT, "أدخل نصاً")
-                try {
-                    startActivity(Intent.createChooser(i, "إرسال البريد ..."))
-                } catch (ex: android.content.ActivityNotFoundException) {
-                    Toast.makeText(this, "لا يوجد تطبيق لإرسال البريد الإلكتروني", Toast.LENGTH_SHORT).show()
-                }
+                val mailIntent = Intent(Intent.ACTION_VIEW)
+                val data = Uri.parse("mailto:?subject=" + "مرسل من تطبيق رجال الحديث" + "&body=" + "أدخل نصاً" + "&to=" + "info@masaha.org")
+                mailIntent.data = data
+                startActivity(Intent.createChooser(mailIntent, "أرسل بريداً"))
 
 
             }

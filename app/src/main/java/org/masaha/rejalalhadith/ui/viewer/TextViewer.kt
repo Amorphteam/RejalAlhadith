@@ -384,7 +384,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     private fun shareCurrentText() {
-        val appInfo = "The text copied from rejal alhadith app"
+        val appInfo = getText(R.string.share_text)
         val shareBody: String
         shareBody = when (type) {
             ViewerType.Rejal -> {
