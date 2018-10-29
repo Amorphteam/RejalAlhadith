@@ -21,6 +21,7 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_text_viewer.*
 import kotlinx.android.synthetic.main.content_text_viewer.*
+import org.masaha.rejalalhadith.utils.PrefManager
 
 
 class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
@@ -40,15 +41,20 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     var ghavaedList: List<RejalGhavaed>? = null
     var bookmarkList: List<Bookmark>? = null
 
-    var currentFontSize: Int = 16 // px
+    var currentFontSize: Int = PrefManager.initialFontSize
     val minTextSize = 10 //px
     val maxTextSize = 50 //px
+
+    var prefManager: PrefManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_text_viewer)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        prefManager = PrefManager(this)
+        currentFontSize = prefManager?.getFontSize() ?: PrefManager.initialFontSize
 
         nextItem.setOnClickListener {
             showItemIn(currentIndex + 1)
@@ -281,6 +287,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     override fun decreaseFontSize() {
         if ((currentFontSize - 5) > minTextSize) {
             currentFontSize -= 5
+            prefManager?.saveFontSize(currentFontSize)
             showItemIn(currentIndex, currentFontSize)
         }
     }
@@ -288,6 +295,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     override fun increaseFontSize() {
         if ((currentFontSize + 5) < maxTextSize) {
             currentFontSize += 5
+            prefManager?.saveFontSize(currentFontSize)
             showItemIn(currentIndex, currentFontSize)
         }
     }
