@@ -141,7 +141,8 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     fun showGhavaed(item: RejalGhavaed, fontSize: Int) {
-        name.text = item.title
+        val dd = "رجال النجاشي " + item.joz + ": " + item.page + " / " + item.harf
+        name.text = dd
         toolbar.title = item.title
         content.loadDataWithBaseURL(null, getHTMLText(item.text, fontSize), "text/html", "UTF-8", null)
     }
