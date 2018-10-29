@@ -188,7 +188,8 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
             }
 
             R.id.action_bookmark -> {
-                if (isBookmarked(rejalList!![currentIndex])) {
+                val rejal = rejalList?.get(currentIndex) ?: return super.onOptionsItemSelected(item)
+                if (isBookmarked(rejal)) {
                     deBookmarkItem()
                 } else {
                     bookmarkItem()
@@ -354,7 +355,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     private fun bookmarkItem() {
-        val rejal = rejalList!![currentIndex]
+        val rejal = rejalList?.get(currentIndex) ?: return
         val bookmark = Bookmark(rejal.name, rejal.det, rejal.ID, rejal.joz, rejal.page, rejal.harf)
 
         subscriptions.add(
@@ -370,7 +371,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     private fun deBookmarkItem() {
-        val rejal = rejalList!![currentIndex]
+        val rejal = rejalList?.get(currentIndex) ?: return
 
         subscriptions.add(
                 DataRepositoryImpl.getInstance().deleteBookmark(rejal.ID)
