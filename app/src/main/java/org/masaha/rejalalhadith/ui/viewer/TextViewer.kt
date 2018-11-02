@@ -147,7 +147,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     fun showGhavaed(item: RejalGhavaed, fontSize: Int) {
-        val dd = "رجال النجاشي " + item.joz + ": " + item.page + " / " + item.harf
+        val dd = "رجال النجاشي " + item.joz + ": " + item.page
         name.text = dd
         toolbar.title = item.title
         content.loadDataWithBaseURL(null, getHTMLText(item.text, fontSize), "text/html", "UTF-8", null)
@@ -318,9 +318,21 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
                 "</style>\n" +
                 "</head>\n" +
                 "<body>\n" +
-        text +
+        text.replace("(عليه السلام)",
+                "<font color='red'> (عليه السلام)</font>").replace("(عليهم السلام)",
+                "<font color='red'> (عليهم السلام)</font>").replace("(عليهما السلام)",
+                "<font color='red'> (عليهما السلام)</font>").replace("(عليها السلام)",
+                "<font color='red'> (عليها السلام)</font>").replace("(ص)",
+                "<font color='red'> (ص)</font>").replace("(رضي الله عنه)",
+                "<font color='red'> (رضي الله عنه)</font>").replace("(رحمه الله)",
+                "<font color='red'> (رحمه الله)</font>").replace("(قدس سره)",
+                "<font color='red'> (قدس سره)</font>").replace("&اختلاف النسخ&",
+                "</br><h4><font color='#1B5E20'>اختلاف النسخ</font></h4>").replace("&اختلاف الكتب&",
+                "</br><h4><font color='#1B5E20'>اختلاف الكتب</font></h4>").replace("&طبقته في الحديث&",
+                "</br><h4><font color='#1B5E20'>طبقته في الحديث</font></h4>").replace("&", "</br>") +
                 "</body>\n" +
                 "</html>"
+
 
         return result
     }
