@@ -40,7 +40,11 @@ class StyleDialog : AppCompatDialogFragment() {
                 .setView(content).create()
 
         val wmlp = styleDialog.window!!.attributes
-        wmlp.gravity = Gravity.TOP or Gravity.RIGHT
+        if(getText(R.string.ltr)=="true"){
+            wmlp.gravity = Gravity.TOP or Gravity.RIGHT
+        }else{
+            wmlp.gravity = Gravity.TOP or Gravity.LEFT
+        }
         wmlp.x = 0   //x position
         wmlp.y = topBorder   //y position
         wmlp.flags = wmlp.flags and WindowManager.LayoutParams.FLAG_DIM_BEHIND.inv()
