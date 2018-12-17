@@ -11,7 +11,7 @@ class PrefManager(ctx: Context) {
     private val fontKey = "pref_font"
 
     companion object {
-        val initialFontSize = 16 // px
+        val initialFontSize = 20 // px
     }
 
     init {

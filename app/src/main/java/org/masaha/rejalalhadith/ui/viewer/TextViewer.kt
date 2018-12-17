@@ -139,7 +139,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     fun showRejal(rejal: RejalLink, fontSize: Int) {
-        val dd = "رجال النجاشي " + rejal.joz + ": " + rejal.page + " / " + rejal.harf
+        val dd = "معجم رجال النجاشي " + rejal.joz + ": " + rejal.page + " / " + rejal.harf
         name.text = dd
         toolbar.title = rejal.name
         content.loadDataWithBaseURL(null, getHTMLText(rejal.det, fontSize), "text/html", "UTF-8", null)
@@ -147,14 +147,14 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     fun showGhavaed(item: RejalGhavaed, fontSize: Int) {
-        val dd = "رجال النجاشي " + item.joz + ": " + item.page
+        val dd = "معجم رجال النجاشي " + item.joz + ": " + item.page
         name.text = dd
         toolbar.title = item.title
         content.loadDataWithBaseURL(null, getHTMLText(item.text, fontSize), "text/html", "UTF-8", null)
     }
 
     fun showBookmark(item: Bookmark, fontSize: Int) {
-        val dd = "رجال النجاشي " + item.joz + ": " + item.page + " / " + item.harf
+        val dd = "معجم رجال النجاشي " + item.joz + ": " + item.page + " / " + item.harf
         name.text = dd
         toolbar.title = item.bookmarkTitle
         content.loadDataWithBaseURL(null, getHTMLText(item.bookmarkText, fontSize), "text/html", "UTF-8", null)
@@ -306,27 +306,36 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
                 "<style type=\"text/css\">\n" +
                 "@font-face {\n" +
                 "    font-family: MyFont;\n" +
-                "    src: url(\"file:///android_asset/droidkufi_regular.ttf\")\n" +
+                "    src: url(\"file:///android_asset/Lotus.ttf\")\n" +
+                "}\n" +
+                "@font-face {\n" +
+                "    font-family: MyFont2;\n" +
+                "    src: url(\"file:///android_asset/Mosawi.ttf\")\n" +
                 "}\n" +
                 "body {\n" +
                 "    font-family: MyFont;\n" +
+                "   line-height: 200%;\n" +
                 "    text-align: justify;\n" +
                 "   direction: rtl; \n" +
                 "   font-size: ${fontSize}px;\n" +
                 "   color: #707070; \n"+
                 "}\n" +
+                ".alaem{\n" +
+                "  color: red;\n" +
+                "  font-family: MyFont2;\n" +
+                "}\n" +
                 "</style>\n" +
                 "</head>\n" +
                 "<body>\n" +
         text.replace("(عليه السلام)",
-                "<font color='red'> (عليه السلام)</font>").replace("(عليهم السلام)",
-                "<font color='red'> (عليهم السلام)</font>").replace("(عليهما السلام)",
-                "<font color='red'> (عليهما السلام)</font>").replace("(عليها السلام)",
-                "<font color='red'> (عليها السلام)</font>").replace("(ص)",
-                "<font color='red'> (ص)</font>").replace("(رضي الله عنه)",
-                "<font color='red'> (رضي الله عنه)</font>").replace("(رحمه الله)",
-                "<font color='red'> (رحمه الله)</font>").replace("(قدس سره)",
-                "<font color='red'> (قدس سره)</font>").replace("&اختلاف النسخ&",
+                "<span class='alaem'> ×</span>").replace("(عليهم السلام)",
+                "<span class='alaem'> ^</span>").replace("(عليهما السلام)",
+                "<span class='alaem'> ’</span>").replace("(عليها السلام)",
+                "<span class='alaem'> ÷</span>").replace("(ص)",
+                "<span class='alaem'>|</span>").replace("(رضي الله عنه)",
+                "<span class='alaem'> (رضي الله عنه)</span>").replace("(رحمه الله)",
+                "<span class='alaem'> &</span>").replace("(قدس سره)",
+                "<span class='alaem'> +</span>").replace("&اختلاف النسخ&",
                 "</br><h4><font color='#1B5E20'>اختلاف النسخ</font></h4>").replace("&اختلاف الكتب&",
                 "</br><h4><font color='#1B5E20'>اختلاف الكتب</font></h4>").replace("&طبقته في الحديث&",
                 "</br><h4><font color='#1B5E20'>طبقته في الحديث</font></h4>").replace("&", "</br>") +

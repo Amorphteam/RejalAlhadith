@@ -7,5 +7,6 @@
     <color name="shadow_color">#5e000000</color>
     <color name="main_black">#383837</color>
     <color name="bottom_black">#60605F</color>
+    <color name="white">#FFFFFF</color>
 
 </resources>
