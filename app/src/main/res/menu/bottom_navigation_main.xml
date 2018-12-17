@@ -8,15 +8,16 @@
         android:title="قائمة الأسماء"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/bottom_bar_tab2"
-        android:enabled="true"
-        android:icon="@drawable/ic_bookmark"
-        android:title="القواعد العامة"
-        app:showAsAction="ifRoom"/>
-    <item
         android:id="@+id/bottom_bar_tab3"
         android:enabled="true"
         android:icon="@drawable/ic_star"
         android:title="المفضلة"
         app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/bottom_bar_tab2"
+        android:enabled="true"
+        android:icon="@drawable/ic_bookmark"
+        android:title="القواعد العامة"
+        app:showAsAction="ifRoom"/>
+
 </menu>

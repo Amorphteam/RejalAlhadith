@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     card_view:cardElevation="2dp"
     card_view:cardUseCompatPadding="true"
-    card_view:contentPadding="16dp"
+    card_view:contentPadding="12dp"
     >
 
     <TextView
@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start"
+        android:textSize="@dimen/standard_text_size"
         android:textColor="@color/main_black"
         />
 
