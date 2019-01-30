@@ -139,7 +139,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     fun showRejal(rejal: RejalLink, fontSize: Int) {
-        val dd = "معجم رجال النجاشي " + rejal.joz + ": " + rejal.page + " / " + rejal.harf
+        val dd = "معجم رجال الحديث " + rejal.joz + ": " + rejal.page
         name.text = dd
         toolbar.title = rejal.name
         content.loadDataWithBaseURL(null, getHTMLText(rejal.det, fontSize), "text/html", "UTF-8", null)
@@ -147,14 +147,14 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     fun showGhavaed(item: RejalGhavaed, fontSize: Int) {
-        val dd = "معجم رجال النجاشي " + item.joz + ": " + item.page
+        val dd = "معجم رجال الحديث " + item.joz + ": " + item.page
         name.text = dd
         toolbar.title = item.title
         content.loadDataWithBaseURL(null, getHTMLText(item.text, fontSize), "text/html", "UTF-8", null)
     }
 
     fun showBookmark(item: Bookmark, fontSize: Int) {
-        val dd = "معجم رجال النجاشي " + item.joz + ": " + item.page + " / " + item.harf
+        val dd = "معجم رجال الحديث " + item.joz + ": " + item.page
         name.text = dd
         toolbar.title = item.bookmarkTitle
         content.loadDataWithBaseURL(null, getHTMLText(item.bookmarkText, fontSize), "text/html", "UTF-8", null)
