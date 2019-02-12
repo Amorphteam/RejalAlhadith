@@ -25,7 +25,7 @@
 
     <item
         android:id="@+id/allapps"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_masaha_team"
         android:title="@string/allapps"
         />
 </menu>
