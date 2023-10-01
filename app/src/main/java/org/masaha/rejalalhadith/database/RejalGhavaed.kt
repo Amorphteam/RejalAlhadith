@@ -41,11 +41,11 @@ class RejalGhavaed : BaseModel, Parcelable {
 
     constructor(parcel: Parcel) : this(
             parcel.readInt(),
-            parcel.readString(),
-            parcel.readString(),
+            parcel.readString()!!,
+            parcel.readString()!!,
             parcel.readInt(),
             parcel.readInt(),
-            parcel.readString())
+            parcel.readString()!!)
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(_id)

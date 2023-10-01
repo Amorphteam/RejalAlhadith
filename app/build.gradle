@@ -9,11 +9,11 @@ apply plugin: 'kotlin-kapt'
 def dbflow_version = "4.2.4"
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
     defaultConfig {
         applicationId "org.masaha.rejalalhadith"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

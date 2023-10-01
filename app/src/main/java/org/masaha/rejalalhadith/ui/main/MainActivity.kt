@@ -68,6 +68,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             super.onBackPressed()
         }
+            var a = Intent(Intent.ACTION_MAIN);
+            a.addCategory(Intent.CATEGORY_HOME);
+            a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(a)
+
     }
 
     override fun onActionMenuItemSelected(item: MenuItem?) {
@@ -182,6 +187,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         bundle.putSerializable(Constants.EXTRA_VIEWER_TYPE, TextViewer.ViewerType.Rejal)
         startTextViewer(bundle)
     }
+
+
 
     override fun onItemClicked(ghavaed: RejalGhavaed) {
         val bundle = Bundle()

@@ -68,21 +68,21 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     fun getExtraData() {
-        type = intent.extras.getSerializable(Constants.EXTRA_VIEWER_TYPE) as ViewerType
+        type = intent.extras!!.getSerializable(Constants.EXTRA_VIEWER_TYPE) as ViewerType
 
         when (type) {
             ViewerType.Rejal -> {
-                val passedRejal: RejalLink = intent.extras.getParcelable(Constants.EXTRA_REJAL_LINK)
-                val rejalFilter = intent.extras.getString(Constants.EXTRA_REJAL_FILTER)
-                getAllRejalFromDB(passedRejal, rejalFilter)
+                val passedRejal: RejalLink = intent.extras!!.getParcelable(Constants.EXTRA_REJAL_LINK)!!
+                val rejalFilter = intent.extras!!.getString(Constants.EXTRA_REJAL_FILTER)
+                rejalFilter?.let { getAllRejalFromDB(passedRejal, it) }
             }
             ViewerType.Ghavaed -> {
-                val passedGhavaed: RejalGhavaed = intent.extras.getParcelable(Constants.EXTRA_GHAVAED_LINK)
-                getAllGhavaedFromDB(passedGhavaed)
+                val passedGhavaed: RejalGhavaed? = intent.extras!!.getParcelable(Constants.EXTRA_GHAVAED_LINK)
+                passedGhavaed?.let { getAllGhavaedFromDB(it) }
             }
             ViewerType.Bookmark -> {
-                val passedBookmark: Bookmark = intent.extras.getParcelable(Constants.EXTRA_BOOKMARK)
-                getAllBookmarkFromDB(passedBookmark)
+                val passedBookmark: Bookmark? = intent.extras!!.getParcelable(Constants.EXTRA_BOOKMARK)
+                passedBookmark?.let { getAllBookmarkFromDB(it) }
             }
         }
     }
