@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_rejal.*
+import kotlinx.android.synthetic.main.fragment_rejal.view.rejalRecycler
 import java.util.*
 
 class RejalFragment : Fragment(), InfiniteScrollListener {
@@ -39,22 +41,19 @@ class RejalFragment : Fragment(), InfiniteScrollListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_rejal, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        rejalRecycler.infiniteScrollListener = this
-        rejalRecycler.setHasFixedSize(false)
+        val view = inflater.inflate(R.layout.fragment_rejal, container, false);
+        view.rejalRecycler.infiniteScrollListener = this
+        view.rejalRecycler.setHasFixedSize(false)
         adapter = RejalAdapter(ArrayList(), listener)
         val layoutManager = LinearLayoutManager(context)
-        rejalRecycler.layoutManager = layoutManager
-        rejalRecycler.adapter = adapter
+        view.rejalRecycler.layoutManager = layoutManager
+        view.rejalRecycler.adapter = adapter
 
         loadRejals(0)
+        // Inflate the layout for this fragment
+        return view
     }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -137,6 +136,21 @@ class RejalFragment : Fragment(), InfiniteScrollListener {
                         })
         )
     }
+
+    override fun onPause() {
+        super.onPause()
+        Log.i("AJC", "pause")
+        // This method is called when the app is minimized (goes into the background).
+        // You can perform any necessary actions here.
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i("AJC", "resume")
+        // This method is called when the app returns to the foreground.
+        // You can perform any necessary actions here.
+    }
+
 
     companion object {
         @JvmStatic
