@@ -9,13 +9,13 @@ apply plugin: 'kotlin-kapt'
 def dbflow_version = "4.2.4"
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 33
     defaultConfig {
         applicationId "org.masaha.rejalalhadith"
         minSdkVersion 21
-        targetSdkVersion 30
-        versionCode 2
-        versionName "1.1"
+        targetSdkVersion 33
+        versionCode 3
+        versionName "1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
