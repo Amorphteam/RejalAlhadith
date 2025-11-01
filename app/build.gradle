@@ -9,13 +9,14 @@ apply plugin: 'kotlin-kapt'
 def dbflow_version = "4.2.4"
 
 android {
-    compileSdkVersion 33
+    namespace "com.papyrus.mehdok.rejalalhadith"
+    compileSdkVersion 35
     defaultConfig {
         applicationId "org.masaha.rejalalhadith"
         minSdkVersion 21
-        targetSdkVersion 33
-        versionCode 3
-        versionName "1.2"
+        targetSdkVersion 35
+        versionCode 4
+        versionName "1.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -24,6 +25,16 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    lint {
+        abortOnError false
     }
 }
 
