@@ -10,13 +10,13 @@ def dbflow_version = "4.2.4"
 
 android {
     namespace "com.papyrus.mehdok.rejalalhadith"
-    compileSdkVersion 35
+    compileSdkVersion 36
     defaultConfig {
         applicationId "org.masaha.rejalalhadith"
         minSdkVersion 21
-        targetSdkVersion 35
-        versionCode 5
-        versionName "1.5"
+        targetSdkVersion 36
+        versionCode 6
+        versionName "1.6.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
