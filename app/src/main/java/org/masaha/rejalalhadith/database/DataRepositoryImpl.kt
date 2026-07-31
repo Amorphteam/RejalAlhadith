@@ -104,7 +104,27 @@ class DataRepositoryImpl private constructor() : DataRepository {
                     .where(RejalLink_Table.ID.`is`(id))
                     .querySingle()
 
-            subscriber.onNext(rejal!!)
+            if (rejal != null) {
+                subscriber.onNext(rejal)
+            }
+            subscriber.onComplete()
+        }
+    }
+
+    override fun getRejalsByIds(ids: List<Int>): Observable<List<RejalLink>> {
+        return Observable.create { subscriber ->
+            if (ids.isEmpty()) {
+                subscriber.onNext(emptyList())
+                subscriber.onComplete()
+                return@create
+            }
+
+            val list = SQLite.select()
+                    .from(RejalLink::class.java)
+                    .where(RejalLink_Table.ID.`in`(ids))
+                    .queryList()
+
+            subscriber.onNext(list)
             subscriber.onComplete()
         }
     }

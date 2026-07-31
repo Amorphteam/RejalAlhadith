@@ -4,8 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import com.papyrus.mehdok.rejalalhadith.R
 import org.masaha.rejalalhadith.database.Bookmark
@@ -14,6 +18,7 @@ import org.masaha.rejalalhadith.database.RejalGhavaed
 import org.masaha.rejalalhadith.database.RejalLink
 import org.masaha.rejalalhadith.ui.main.StyleDialog
 import org.masaha.rejalalhadith.utils.Constants
+import org.masaha.rejalalhadith.utils.RejalHierarchy
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -40,6 +45,8 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     var rejalList: List<RejalLink>? = null
     var ghavaedList: List<RejalGhavaed>? = null
     var bookmarkList: List<Bookmark>? = null
+    private var rejalHierarchy: RejalHierarchy? = null
+    private var relatedRequestId = 0
 
     var currentFontSize: Int = PrefManager.initialFontSize
     val minTextSize = 10 //px
@@ -65,6 +72,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
         }
 
         getExtraData()
+        loadRejalHierarchy()
     }
 
     fun getExtraData() {
@@ -143,10 +151,12 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
         name.text = dd
         toolbar.title = rejal.name
         content.loadDataWithBaseURL(null, getHTMLText(rejal.det, fontSize), "text/html", "UTF-8", null)
+        showRelatedRejals(rejal.ID)
         checkRejalBookmark()
     }
 
     fun showGhavaed(item: RejalGhavaed, fontSize: Int) {
+        relationCard.visibility = View.GONE
         val dd = "معجم رجال الحديث " + item.joz + ": " + item.page
         name.text = dd
         toolbar.title = item.title
@@ -158,6 +168,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
         name.text = dd
         toolbar.title = item.bookmarkTitle
         content.loadDataWithBaseURL(null, getHTMLText(item.bookmarkText, fontSize), "text/html", "UTF-8", null)
+        showRelatedRejals(item.bookmarkId)
     }
 
     fun showFirstPageMsg() {
@@ -240,6 +251,125 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
                     showItemIn(currentIndex)
                 }).subscribe()
         )
+    }
+
+    private fun loadRejalHierarchy() {
+        subscriptions.add(
+                Observable.fromCallable { RejalHierarchy.get(applicationContext) }
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ hierarchy ->
+                            rejalHierarchy = hierarchy
+                            when (type) {
+                                ViewerType.Rejal ->
+                                    rejalList?.getOrNull(currentIndex)?.let { showRelatedRejals(it.ID) }
+                                ViewerType.Bookmark ->
+                                    bookmarkList?.getOrNull(currentIndex)?.let {
+                                        showRelatedRejals(it.bookmarkId)
+                                    }
+                                ViewerType.Ghavaed -> relationCard.visibility = View.GONE
+                            }
+                        }, { error ->
+                            Log.e("TextViewer", "Unable to load rejal relationships", error)
+                            relationCard.visibility = View.GONE
+                        })
+        )
+    }
+
+    private fun showRelatedRejals(rejalId: Int) {
+        relationCard.visibility = View.GONE
+        relationItems.removeAllViews()
+
+        val hierarchy = rejalHierarchy ?: return
+        val childIds = hierarchy.childrenOf(rejalId)
+        val relatedIds: List<Int>
+        val titleRes: Int
+
+        if (childIds.isNotEmpty()) {
+            relatedIds = childIds
+            titleRes = R.string.related_children
+        } else {
+            relatedIds = hierarchy.parentsOf(rejalId)
+            titleRes = if (relatedIds.size > 1) R.string.related_parents else R.string.related_parent
+        }
+
+        if (relatedIds.isEmpty()) {
+            return
+        }
+
+        relationTitle.setText(titleRes)
+        val requestId = ++relatedRequestId
+        subscriptions.add(
+                DataRepositoryImpl.getInstance().getRejalsByIds(relatedIds)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ relatedRejals ->
+                            if (requestId != relatedRequestId) {
+                                return@subscribe
+                            }
+
+                            relationItems.removeAllViews()
+                            val byId = relatedRejals.associateBy { it.ID }
+                            val orderedRelated = relatedIds.mapNotNull { byId[it] }
+                            if (orderedRelated.isEmpty()) {
+                                relationCard.visibility = View.GONE
+                                return@subscribe
+                            }
+
+                            orderedRelated.forEach { related ->
+                                relationItems.addView(createRelatedRejalView(related))
+                            }
+                            relationCard.visibility = View.VISIBLE
+                            // Views are attached after the scroll view was first laid out, so its
+                            // RTL start offset has to be restored by hand.
+                            relationScroll.post { relationScroll.fullScroll(View.FOCUS_RIGHT) }
+                        }, { error ->
+                            Log.e("TextViewer", "Unable to load related rejals", error)
+                            if (requestId == relatedRequestId) {
+                                relationCard.visibility = View.GONE
+                            }
+                        })
+        )
+    }
+
+    private fun createRelatedRejalView(rejal: RejalLink): TextView {
+        return TextView(this).apply {
+            text = rejal.name
+            gravity = Gravity.CENTER
+            setTextColor(resources.getColor(R.color.colorPrimary))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+            val horizontalPadding = resources.getDimensionPixelSize(R.dimen.activity_horizontal_margin)
+            val verticalPadding = resources.getDimensionPixelSize(R.dimen.nav_header_vertical_spacing)
+            setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding)
+            isClickable = true
+            isFocusable = true
+
+            val selectableBackground = TypedValue()
+            if (theme.resolveAttribute(
+                            android.R.attr.selectableItemBackground,
+                            selectableBackground,
+                            true)) {
+                setBackgroundResource(selectableBackground.resourceId)
+            }
+
+            setOnClickListener { openRelatedRejal(rejal) }
+        }
+    }
+
+    private fun openRelatedRejal(rejal: RejalLink) {
+        if (type == ViewerType.Rejal) {
+            val index = rejalList?.indexOfFirst { it.ID == rejal.ID } ?: -1
+            if (index >= 0) {
+                showItemIn(index)
+                return
+            }
+        }
+
+        val bundle = Bundle()
+        bundle.putParcelable(Constants.EXTRA_REJAL_LINK, rejal)
+        bundle.putString(Constants.EXTRA_REJAL_FILTER, "")
+        bundle.putSerializable(Constants.EXTRA_VIEWER_TYPE, ViewerType.Rejal)
+        startActivity(Intent(this, TextViewer::class.java).putExtras(bundle))
     }
 
     private fun getAllBookmarkFromDB(bookmark: Bookmark) {

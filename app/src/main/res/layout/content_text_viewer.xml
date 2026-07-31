@@ -17,7 +17,7 @@
         android:layout_height="0dp"
         android:layout_margin="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/cardView"
+        app:layout_constraintBottom_toTopOf="@+id/relationCard"
         app:layout_constraintTop_toTopOf="parent"
         card_view:cardElevation="0dp"
         card_view:contentPadding="16dp"
@@ -32,16 +32,49 @@
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:id="@+id/cardView"
+        android:id="@+id/relationCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         card_view:cardElevation="0dp"
         card_view:cardUseCompatPadding="true"
-        card_view:contentPadding="16dp"
+        card_view:contentPadding="12dp"
         android:visibility="gone"
         >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layoutDirection="rtl"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/relationTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:textColor="@color/main_black"
+                android:textStyle="bold"
+                tools:text="الأسماء التابعة لهذا الاسم" />
+
+            <HorizontalScrollView
+                android:id="@+id/relationScroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/relationItems"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:orientation="horizontal" />
+
+            </HorizontalScrollView>
+
+        </LinearLayout>
 
     </android.support.v7.widget.CardView>
 
