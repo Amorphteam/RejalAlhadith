@@ -19,7 +19,7 @@
         android:textColor="@color/main_black"
         android:textSize="18sp"
         android:textStyle="bold"
-        tools:text="مرتبط بـ" />
+        tools:text="متحد مع:" />
 
     <ScrollView
         android:layout_width="match_parent"

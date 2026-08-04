@@ -9,8 +9,8 @@
     <string name="title_activity_text_viewer">TextViewer</string>
     <string name="first_item">هذا هو أول اسم</string>
     <string name="last_item">هذا هو آخر اسم</string>
-    <string name="related_to">مرتبط بـ</string>
-    <string name="related_children">الأسماء التابعة لهذا الاسم</string>
+    <string name="related_to">متحد مع:</string>
+    <string name="related_children">متحد مع:</string>
     <string name="related_parent">هذا الاسم تابع للاسم</string>
     <string name="related_parents">هذا الاسم تابع للأسماء</string>
     <string name="about_us"><![CDATA[
