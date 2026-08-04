@@ -2,13 +2,16 @@ package org.masaha.rejalalhadith.ui.viewer
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.BottomSheetDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.papyrus.mehdok.rejalalhadith.R
@@ -47,6 +50,14 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     var bookmarkList: List<Bookmark>? = null
     private var rejalHierarchy: RejalHierarchy? = null
     private var relatedRequestId = 0
+    private var relatedTitleRes: Int = R.string.related_to
+    private var relatedItems: List<RelatedRejalItem> = emptyList()
+    private var relatedSheetDialog: BottomSheetDialog? = null
+
+    private data class RelatedRejalItem(
+            val rejal: RejalLink,
+            val isParent: Boolean
+    )
 
     var currentFontSize: Int = PrefManager.initialFontSize
     val minTextSize = 10 //px
@@ -69,6 +80,10 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
 
         prevItem.setOnClickListener {
             showItemIn(currentIndex - 1)
+        }
+
+        relationButton.setOnClickListener {
+            showRelatedSheet()
         }
 
         getExtraData()
@@ -156,7 +171,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     fun showGhavaed(item: RejalGhavaed, fontSize: Int) {
-        relationCard.visibility = View.GONE
+        clearRelatedRejals()
         val dd = "معجم رجال الحديث " + item.joz + ": " + item.page
         name.text = dd
         toolbar.title = item.title
@@ -222,6 +237,8 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     override fun onDestroy() {
+        relatedSheetDialog?.dismiss()
+        relatedSheetDialog = null
         super.onDestroy()
 
         subscriptions.clear()
@@ -267,37 +284,52 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
                                     bookmarkList?.getOrNull(currentIndex)?.let {
                                         showRelatedRejals(it.bookmarkId)
                                     }
-                                ViewerType.Ghavaed -> relationCard.visibility = View.GONE
+                                ViewerType.Ghavaed -> clearRelatedRejals()
                             }
                         }, { error ->
                             Log.e("TextViewer", "Unable to load rejal relationships", error)
-                            relationCard.visibility = View.GONE
+                            clearRelatedRejals()
                         })
         )
     }
 
+    private fun clearRelatedRejals() {
+        relatedRequestId++
+        relatedItems = emptyList()
+        relationButton.visibility = View.GONE
+        relatedSheetDialog?.dismiss()
+        relatedSheetDialog = null
+    }
+
     private fun showRelatedRejals(rejalId: Int) {
-        relationCard.visibility = View.GONE
-        relationItems.removeAllViews()
+        clearRelatedRejals()
 
         val hierarchy = rejalHierarchy ?: return
-        val childIds = hierarchy.childrenOf(rejalId)
-        val relatedIds: List<Int>
-        val titleRes: Int
-
-        if (childIds.isNotEmpty()) {
-            relatedIds = childIds
-            titleRes = R.string.related_children
-        } else {
-            relatedIds = hierarchy.parentsOf(rejalId)
-            titleRes = if (relatedIds.size > 1) R.string.related_parents else R.string.related_parent
+        val ownChildIds = hierarchy.childrenOf(rejalId)
+        val parentIds = hierarchy.parentsOf(rejalId)
+        val siblingIds = linkedSetOf<Int>()
+        parentIds.forEach { parentId ->
+            hierarchy.childrenOf(parentId).forEach { siblingId ->
+                if (siblingId != rejalId) {
+                    siblingIds.add(siblingId)
+                }
+            }
         }
+
+        val relatedChildIds = (ownChildIds + siblingIds).filterNot { it in parentIds }.distinct()
+        val relatedIds = (parentIds + relatedChildIds).distinct()
 
         if (relatedIds.isEmpty()) {
             return
         }
 
-        relationTitle.setText(titleRes)
+        relatedTitleRes = when {
+            parentIds.isNotEmpty() && relatedChildIds.isNotEmpty() -> R.string.related_to
+            relatedChildIds.isNotEmpty() -> R.string.related_children
+            parentIds.size > 1 -> R.string.related_parents
+            else -> R.string.related_parent
+        }
+
         val requestId = ++relatedRequestId
         subscriptions.add(
                 DataRepositoryImpl.getInstance().getRejalsByIds(relatedIds)
@@ -308,34 +340,63 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
                                 return@subscribe
                             }
 
-                            relationItems.removeAllViews()
                             val byId = relatedRejals.associateBy { it.ID }
-                            val orderedRelated = relatedIds.mapNotNull { byId[it] }
-                            if (orderedRelated.isEmpty()) {
-                                relationCard.visibility = View.GONE
-                                return@subscribe
+                            val parentItems = parentIds.mapNotNull { id ->
+                                byId[id]?.let { RelatedRejalItem(it, true) }
                             }
-
-                            orderedRelated.forEach { related ->
-                                relationItems.addView(createRelatedRejalView(related))
+                            val childItems = relatedChildIds.mapNotNull { id ->
+                                byId[id]?.let { RelatedRejalItem(it, false) }
                             }
-                            relationCard.visibility = View.VISIBLE
-                            // Views are attached after the scroll view was first laid out, so its
-                            // RTL start offset has to be restored by hand.
-                            relationScroll.post { relationScroll.fullScroll(View.FOCUS_RIGHT) }
+                            relatedItems = parentItems + childItems
+                            relationButton.visibility = if (relatedItems.isEmpty()) {
+                                View.GONE
+                            } else {
+                                View.VISIBLE
+                            }
                         }, { error ->
                             Log.e("TextViewer", "Unable to load related rejals", error)
                             if (requestId == relatedRequestId) {
-                                relationCard.visibility = View.GONE
+                                clearRelatedRejals()
                             }
                         })
         )
     }
 
-    private fun createRelatedRejalView(rejal: RejalLink): TextView {
+    private fun showRelatedSheet() {
+        if (relatedItems.isEmpty()) {
+            return
+        }
+
+        relatedSheetDialog?.dismiss()
+
+        val dialog = BottomSheetDialog(this)
+        val sheetView = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_related, null)
+        val titleView = sheetView.findViewById<TextView>(R.id.relationSheetTitle)
+        val itemsContainer = sheetView.findViewById<LinearLayout>(R.id.relationSheetItems)
+
+        titleView.setText(relatedTitleRes)
+        relatedItems.forEach { item ->
+            itemsContainer.addView(createRelatedRejalView(item))
+        }
+
+        dialog.setContentView(sheetView)
+        dialog.setOnDismissListener {
+            if (relatedSheetDialog === dialog) {
+                relatedSheetDialog = null
+            }
+        }
+        relatedSheetDialog = dialog
+        dialog.show()
+    }
+
+    private fun createRelatedRejalView(item: RelatedRejalItem): TextView {
         return TextView(this).apply {
-            text = rejal.name
-            gravity = Gravity.CENTER
+            text = if (item.isParent) {
+                "★ ${item.rejal.name}"
+            } else {
+                item.rejal.name
+            }
+            gravity = Gravity.START
             setTextColor(resources.getColor(R.color.colorPrimary))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
             val horizontalPadding = resources.getDimensionPixelSize(R.dimen.activity_horizontal_margin)
@@ -352,7 +413,10 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
                 setBackgroundResource(selectableBackground.resourceId)
             }
 
-            setOnClickListener { openRelatedRejal(rejal) }
+            setOnClickListener {
+                relatedSheetDialog?.dismiss()
+                openRelatedRejal(item.rejal)
+            }
         }
     }
 
