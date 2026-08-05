@@ -4,6 +4,7 @@ class Constants {
     companion object {
         const val EXTRA_REJAL_LINK = "EXTRA_REJAL_LINK"
         const val EXTRA_REJAL_FILTER = "EXTRA_REJAL_FILTER"
+        const val EXTRA_SEARCH_MODE = "EXTRA_SEARCH_MODE"
         const val EXTRA_GHAVAED_LINK = "EXTRA_GHAVAED_LINK"
         const val EXTRA_BOOKMARK = "EXTRA_BOOKMARK"
         const val EXTRA_VIEWER_TYPE = "EXTRA_VIEWER_TYPE"

@@ -3,6 +3,7 @@ package org.masaha.rejalalhadith.database
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import io.reactivex.Completable
 import io.reactivex.Observable
+import org.masaha.rejalalhadith.utils.SearchMode
 
 class DataRepositoryImpl private constructor() : DataRepository {
     private val pageLimitCount = 100
@@ -68,13 +69,13 @@ class DataRepositoryImpl private constructor() : DataRepository {
         }
     }
 
-    override fun getRejals(page: Int, keyword: String): Observable<List<RejalLink>> {
+    override fun getRejals(page: Int, keyword: String, mode: SearchMode): Observable<List<RejalLink>> {
         return Observable.create { subscriber ->
             val start = page * pageLimitCount
 
             val list = SQLite.select()
                     .from(RejalLink::class.java)
-                    .where(RejalLink_Table.name.like("%$keyword%"))
+                    .where(searchCondition(keyword, mode))
                     .offset(start)
                     .limit(pageLimitCount)
                     .queryList()
@@ -84,17 +85,22 @@ class DataRepositoryImpl private constructor() : DataRepository {
         }
     }
 
-    override fun getRejals(keyword: String): Observable<List<RejalLink>> {
+    override fun getRejals(keyword: String, mode: SearchMode): Observable<List<RejalLink>> {
         return Observable.create { subscriber ->
-
             val list = SQLite.select()
                     .from(RejalLink::class.java)
-                    .where(RejalLink_Table.name.like("%$keyword%"))
+                    .where(searchCondition(keyword, mode))
                     .queryList()
 
             subscriber.onNext(list)
             subscriber.onComplete()
         }
+    }
+
+    private fun searchCondition(keyword: String, mode: SearchMode) = when (mode) {
+        SearchMode.NAME_STARTS_WITH -> RejalLink_Table.name.like("$keyword%")
+        SearchMode.NAME_CONTAINS -> RejalLink_Table.name.like("%$keyword%")
+        SearchMode.DESCRIPTION -> RejalLink_Table.det.like("%$keyword%")
     }
 
     override fun getRejal(id: Int): Observable<RejalLink?> {

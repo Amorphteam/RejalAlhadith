@@ -13,6 +13,9 @@
     <string name="related_children">متحد مع:</string>
     <string name="related_parent">هذا الاسم تابع للاسم</string>
     <string name="related_parents">هذا الاسم تابع للأسماء</string>
+    <string name="search_mode_starts_with">بداية الاسم</string>
+    <string name="search_mode_contains">في الاسم</string>
+    <string name="search_mode_description">في الوصف</string>
     <string name="about_us"><![CDATA[
 <html>
  <head></head>

@@ -22,13 +22,14 @@ import org.masaha.rejalalhadith.ui.main.tabghavaed.GhavaedFragment
 import org.masaha.rejalalhadith.ui.main.tabrejal.RejalFragment
 import org.masaha.rejalalhadith.ui.viewer.TextViewer
 import org.masaha.rejalalhadith.utils.Constants
+import org.masaha.rejalalhadith.utils.PrefManager
+import org.masaha.rejalalhadith.utils.SearchMode
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import android.widget.Toast
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
@@ -40,11 +41,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var thirdFragment: BookmarkFragment? = null
 
     private val subscriptions: CompositeDisposable = CompositeDisposable()
+    private lateinit var prefManager: PrefManager
+    private var searchMode: SearchMode = SearchMode.NAME_CONTAINS
+    private var currentSearchQuery = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        prefManager = PrefManager(this)
+        searchMode = prefManager.getSearchMode()
 
         searchView.attachNavigationDrawerToMenuButton(drawer_layout)
         searchView.setOnMenuItemClickListener(this)
@@ -54,12 +60,32 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //set bottom nav click listener
         bottomNavigation.setOnNavigationItemSelectedListener(this)
 
+        setupSearchModeSelector()
+
         // load first fragment
         firstFragment = RejalFragment.newInstance()
         secondFragment = GhavaedFragment.newInstance()
         thirdFragment = BookmarkFragment.newInstance()
 
         replaceFragment(firstFragment!!)
+    }
+
+    private fun setupSearchModeSelector() {
+        when (searchMode) {
+            SearchMode.NAME_STARTS_WITH -> searchModeStartsWith.isChecked = true
+            SearchMode.NAME_CONTAINS -> searchModeContains.isChecked = true
+            SearchMode.DESCRIPTION -> searchModeDescription.isChecked = true
+        }
+
+        searchModeGroup.setOnCheckedChangeListener { _, checkedId ->
+            searchMode = when (checkedId) {
+                R.id.searchModeStartsWith -> SearchMode.NAME_STARTS_WITH
+                R.id.searchModeDescription -> SearchMode.DESCRIPTION
+                else -> SearchMode.NAME_CONTAINS
+            }
+            prefManager.saveSearchMode(searchMode)
+            firstFragment?.searchRejals(currentSearchQuery, searchMode)
+        }
     }
 
     override fun onBackPressed() {
@@ -133,14 +159,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.bottom_bar_tab1 -> {
                 searchView.visibility = View.VISIBLE
+                searchModeGroup.visibility = View.VISIBLE
                 replaceFragment(firstFragment!!)
             }
             R.id.bottom_bar_tab2 -> {
                 searchView.visibility = View.INVISIBLE
+                searchModeGroup.visibility = View.GONE
                 replaceFragment(secondFragment!!)
             }
             R.id.bottom_bar_tab3 -> {
                 searchView.visibility = View.INVISIBLE
+                searchModeGroup.visibility = View.GONE
                 replaceFragment(thirdFragment!!)
             }
         }
@@ -168,18 +197,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onSearchTextChanged(oldQuery: String?, newQuery: String?) {
-        var query = ""
-        if (newQuery != null) {
-            query = newQuery
-        }
-
-        firstFragment?.searchRejals(query)
+        currentSearchQuery = newQuery.orEmpty()
+        firstFragment?.searchRejals(currentSearchQuery, searchMode)
     }
 
-    override fun onItemClicked(rejal: RejalLink, filter: String) {
+    override fun onItemClicked(rejal: RejalLink, filter: String, searchMode: SearchMode) {
         val bundle = Bundle()
         bundle.putParcelable(Constants.EXTRA_REJAL_LINK, rejal)
         bundle.putString(Constants.EXTRA_REJAL_FILTER, filter)
+        bundle.putSerializable(Constants.EXTRA_SEARCH_MODE, searchMode)
         bundle.putSerializable(Constants.EXTRA_VIEWER_TYPE, TextViewer.ViewerType.Rejal)
         startTextViewer(bundle)
     }

@@ -2,12 +2,13 @@ package org.masaha.rejalalhadith.database
 
 import io.reactivex.Completable
 import io.reactivex.Observable
+import org.masaha.rejalalhadith.utils.SearchMode
 
 interface DataRepository {
     fun getRejals(): Observable<List<RejalLink>>
     fun getRejals(page: Int): Observable<List<RejalLink>>
-    fun getRejals(page: Int, keyword: String): Observable<List<RejalLink>>
-    fun getRejals(keyword: String): Observable<List<RejalLink>>
+    fun getRejals(page: Int, keyword: String, mode: SearchMode): Observable<List<RejalLink>>
+    fun getRejals(keyword: String, mode: SearchMode): Observable<List<RejalLink>>
     fun getRejal(id: Int): Observable<RejalLink?>
     fun getRejalsByIds(ids: List<Int>): Observable<List<RejalLink>>
     fun getGhavaeds(): Observable<List<RejalGhavaed>>

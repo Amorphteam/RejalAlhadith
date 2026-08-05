@@ -13,6 +13,7 @@ import com.papyrus.mehdok.rejalalhadith.R
 import org.masaha.rejalalhadith.customviews.InfiniteScrollListener
 import org.masaha.rejalalhadith.database.DataRepositoryImpl
 import org.masaha.rejalalhadith.ui.main.OnTabItemClickListener
+import org.masaha.rejalalhadith.utils.SearchMode
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -32,6 +33,7 @@ class RejalFragment : Fragment(), InfiniteScrollListener {
 
     private var isSearching = false
     private var searchQuery = ""
+    private var searchMode: SearchMode = SearchMode.NAME_CONTAINS
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +47,7 @@ class RejalFragment : Fragment(), InfiniteScrollListener {
         view.rejalRecycler.infiniteScrollListener = this
         view.rejalRecycler.setHasFixedSize(false)
         adapter = RejalAdapter(ArrayList(), listener)
+        adapter?.searchMode = searchMode
         val layoutManager = LinearLayoutManager(context)
         view.rejalRecycler.layoutManager = layoutManager
         view.rejalRecycler.adapter = adapter
@@ -73,7 +76,7 @@ class RejalFragment : Fragment(), InfiniteScrollListener {
     override fun loadMoreContent(page: Int) {
         if (!loading) {
             if (isSearching) {
-                searchRejals(searchQuery, ++pageCount)
+                searchRejals(searchQuery, searchMode, ++pageCount)
             } else {
                 loadRejals(++pageCount)
             }
@@ -100,9 +103,11 @@ class RejalFragment : Fragment(), InfiniteScrollListener {
 
     }
 
-    fun searchRejals(query: String, page: Int = 0) {
+    fun searchRejals(query: String, mode: SearchMode, page: Int = 0) {
         searchQuery = query
+        searchMode = mode
         adapter?.searchQuery = query
+        adapter?.searchMode = mode
 
         if (page == 0) {
             // if it is first search attempt clear all items
@@ -124,7 +129,7 @@ class RejalFragment : Fragment(), InfiniteScrollListener {
         subscriptions.add(
                 DataRepositoryImpl
                         .getInstance()
-                        .getRejals(pageCount, query)
+                        .getRejals(pageCount, query, mode)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ rejals ->

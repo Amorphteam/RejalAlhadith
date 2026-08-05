@@ -22,6 +22,7 @@ import org.masaha.rejalalhadith.database.RejalLink
 import org.masaha.rejalalhadith.ui.main.StyleDialog
 import org.masaha.rejalalhadith.utils.Constants
 import org.masaha.rejalalhadith.utils.RejalHierarchy
+import org.masaha.rejalalhadith.utils.SearchMode
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -97,7 +98,9 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
             ViewerType.Rejal -> {
                 val passedRejal: RejalLink = intent.extras!!.getParcelable(Constants.EXTRA_REJAL_LINK)!!
                 val rejalFilter = intent.extras!!.getString(Constants.EXTRA_REJAL_FILTER)
-                rejalFilter?.let { getAllRejalFromDB(passedRejal, it) }
+                val searchMode = intent.extras!!.getSerializable(Constants.EXTRA_SEARCH_MODE) as? SearchMode
+                        ?: SearchMode.NAME_CONTAINS
+                rejalFilter?.let { getAllRejalFromDB(passedRejal, it, searchMode) }
             }
             ViewerType.Ghavaed -> {
                 val passedGhavaed: RejalGhavaed? = intent.extras!!.getParcelable(Constants.EXTRA_GHAVAED_LINK)
@@ -242,7 +245,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
         subscriptions.dispose()
     }
 
-    private fun getAllRejalFromDB(rejal: RejalLink, filter: String) {
+    private fun getAllRejalFromDB(rejal: RejalLink, filter: String, searchMode: SearchMode) {
         val rejals: Observable<List<RejalLink>> = if (filter.isEmpty()) {
             DataRepositoryImpl
                     .getInstance()
@@ -252,7 +255,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
         } else {
             DataRepositoryImpl
                     .getInstance()
-                    .getRejals(filter)
+                    .getRejals(filter, searchMode)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
         }

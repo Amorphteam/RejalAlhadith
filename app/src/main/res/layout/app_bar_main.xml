@@ -11,32 +11,79 @@
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <TextView
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/app_name"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+                <com.arlib.floatingsearchview.FloatingSearchView
+                    android:id="@+id/searchView"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_margin="8dp"
+                    app:floatingSearch_close_search_on_keyboard_dismiss="true"
+                    app:floatingSearch_leftActionMode="showHamburger"
+                    app:floatingSearch_searchHint="    رجال الحديث"
+                    app:floatingSearch_showSearchKey="true"
+                    app:floatingSearch_hintTextColor="@android:color/darker_gray"
+                    app:floatingSearch_suggestionsListAnimDuration="250" />
+            </FrameLayout>
+
+            <RadioGroup
+                android:id="@+id/searchModeGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:layout_marginTop="4dp"
-                android:text="@string/app_name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                android:gravity="start|center_vertical"
+                android:layoutDirection="rtl"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp">
 
-            <com.arlib.floatingsearchview.FloatingSearchView
-                android:id="@+id/searchView"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:layout_margin="8dp"
-                app:floatingSearch_close_search_on_keyboard_dismiss="true"
-                app:floatingSearch_leftActionMode="showHamburger"
-                app:floatingSearch_searchHint="    رجال الحديث"
-                app:floatingSearch_showSearchKey="true"
-                app:floatingSearch_hintTextColor="@android:color/darker_gray"
-                app:floatingSearch_suggestionsListAnimDuration="250" />
-        </FrameLayout>
+                <RadioButton
+                    android:id="@+id/searchModeStartsWith"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:buttonTint="@color/white"
+                    android:text="@string/search_mode_starts_with"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
 
+                <RadioButton
+                    android:id="@+id/searchModeContains"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:buttonTint="@color/white"
+                    android:checked="true"
+                    android:text="@string/search_mode_contains"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
+                <RadioButton
+                    android:id="@+id/searchModeDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:buttonTint="@color/white"
+                    android:text="@string/search_mode_description"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+            </RadioGroup>
+        </LinearLayout>
 
     </android.support.design.widget.AppBarLayout>
 
