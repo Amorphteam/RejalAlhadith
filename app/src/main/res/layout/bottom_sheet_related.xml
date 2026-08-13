@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/surface"
     android:layoutDirection="rtl"
     android:orientation="vertical"
     android:paddingBottom="16dp"
@@ -16,7 +17,7 @@
         android:layout_height="wrap_content"
         android:gravity="start"
         android:paddingBottom="8dp"
-        android:textColor="@color/main_black"
+        android:textColor="@color/text_primary"
         android:textSize="18sp"
         android:textStyle="bold"
         tools:text="متحد مع:" />

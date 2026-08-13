@@ -37,7 +37,13 @@
                     app:floatingSearch_leftActionMode="showHamburger"
                     app:floatingSearch_searchHint="    رجال الحديث"
                     app:floatingSearch_showSearchKey="true"
-                    app:floatingSearch_hintTextColor="@android:color/darker_gray"
+                    app:floatingSearch_backgroundColor="@color/surface"
+                    app:floatingSearch_viewTextColor="@color/text_primary"
+                    app:floatingSearch_viewSearchInputTextColor="@color/text_primary"
+                    app:floatingSearch_clearBtnColor="@color/text_secondary"
+                    app:floatingSearch_menuItemIconColor="@color/text_secondary"
+                    app:floatingSearch_leftActionColor="@color/text_secondary"
+                    app:floatingSearch_hintTextColor="@color/text_secondary"
                     app:floatingSearch_suggestionsListAnimDuration="250" />
             </FrameLayout>
 
@@ -57,9 +63,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:buttonTint="@color/white"
+                    android:buttonTint="@color/on_primary"
                     android:text="@string/search_mode_starts_with"
-                    android:textColor="@color/white"
+                    android:textColor="@color/on_primary"
                     android:textSize="12sp" />
 
                 <RadioButton
@@ -67,10 +73,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:buttonTint="@color/white"
+                    android:buttonTint="@color/on_primary"
                     android:checked="true"
                     android:text="@string/search_mode_contains"
-                    android:textColor="@color/white"
+                    android:textColor="@color/on_primary"
                     android:textSize="12sp" />
 
                 <RadioButton
@@ -78,9 +84,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:buttonTint="@color/white"
+                    android:buttonTint="@color/on_primary"
                     android:text="@string/search_mode_description"
-                    android:textColor="@color/white"
+                    android:textColor="@color/on_primary"
                     android:textSize="12sp" />
             </RadioGroup>
         </LinearLayout>

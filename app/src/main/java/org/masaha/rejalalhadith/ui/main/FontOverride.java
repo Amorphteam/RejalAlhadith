@@ -2,6 +2,7 @@ package org.masaha.rejalalhadith.ui.main;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Build;
 import java.lang.reflect.Field;
 
 /**
@@ -10,9 +11,29 @@ import java.lang.reflect.Field;
 public class FontOverride {
     public static void setDefaultFont(Context context,
                                       String staticTypefaceFieldName, String fontAssetName) {
-        final Typeface regular = Typeface.createFromAsset(context.getAssets(),
-                fontAssetName);
-        replaceFont(staticTypefaceFieldName, regular);
+        setDefaultFont(context, staticTypefaceFieldName, fontAssetName, 400);
+    }
+
+    public static void setDefaultFont(Context context,
+                                      String staticTypefaceFieldName,
+                                      String fontAssetName,
+                                      int weight) {
+        replaceFont(staticTypefaceFieldName, createTypeface(context, fontAssetName, weight));
+    }
+
+    private static Typeface createTypeface(Context context, String fontAssetName, int weight) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return new Typeface.Builder(context.getAssets(), fontAssetName)
+                    .setFontVariationSettings("'wght' " + weight)
+                    .setWeight(weight)
+                    .build();
+        }
+
+        Typeface regular = Typeface.createFromAsset(context.getAssets(), fontAssetName);
+        if (weight >= 600) {
+            return Typeface.create(regular, Typeface.BOLD);
+        }
+        return regular;
     }
 
     protected static void replaceFont(String staticTypefaceFieldName,

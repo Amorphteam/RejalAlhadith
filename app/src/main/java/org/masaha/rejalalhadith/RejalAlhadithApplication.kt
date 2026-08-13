@@ -1,16 +1,20 @@
 package org.masaha.rejalalhadith
 
 import android.app.Application
+import android.support.v7.app.AppCompatDelegate
 import org.masaha.rejalalhadith.ui.main.FontOverride
+import org.masaha.rejalalhadith.utils.PrefManager
 import com.raizlabs.android.dbflow.config.FlowManager
 
 class RejalAlhadithApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        FontOverride.setDefaultFont(this, "DEFAULT", "droidkufi_regular.ttf");
-        FontOverride.setDefaultFont(this, "MONOSPACE", "droidkufi_regular.ttf");
-        FontOverride.setDefaultFont(this, "SERIF", "droidkufi_regular.ttf");
-        FontOverride.setDefaultFont(this, "SANS_SERIF", "droidkufi_regular.ttf");
+        AppCompatDelegate.setDefaultNightMode(PrefManager(this).getThemeMode().toNightMode())
+
+        FontOverride.setDefaultFont(this, "DEFAULT", "Rubik-VariableFont_wght.ttf", 500);
+        FontOverride.setDefaultFont(this, "MONOSPACE", "Rubik-VariableFont_wght.ttf", 500);
+        FontOverride.setDefaultFont(this, "SERIF", "Rubik-VariableFont_wght.ttf", 500);
+        FontOverride.setDefaultFont(this, "SANS_SERIF", "Rubik-VariableFont_wght.ttf", 500);
 
         FlowManager.init(this)
     }

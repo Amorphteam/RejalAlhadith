@@ -74,6 +74,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
 
         prefManager = PrefManager(this)
         currentFontSize = prefManager?.getFontSize() ?: PrefManager.initialFontSize
+        content.setBackgroundColor(resources.getColor(R.color.webview_background))
 
         nextItem.setOnClickListener {
             showItemIn(currentIndex + 1)
@@ -495,6 +496,9 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     private fun getHTMLText(text: String, fontSize: Int): String {
+        val textColor = colorToCss(resources.getColor(R.color.webview_text))
+        val backgroundColor = colorToCss(resources.getColor(R.color.webview_background))
+        val headingColor = colorToCss(resources.getColor(R.color.webview_heading))
         var result = "<html>\n" +
                 "<head>\n" +
                 "<style type=\"text/css\">\n" +
@@ -512,7 +516,8 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
                 "    text-align: justify;\n" +
                 "   direction: rtl; \n" +
                 "   font-size: ${fontSize}px;\n" +
-                "   color: #707070; \n"+
+                "   color: $textColor; \n"+
+                "   background-color: $backgroundColor; \n"+
                 "}\n" +
                 ".alaem{\n" +
                 "  color: red;\n" +
@@ -530,14 +535,18 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
                 "<span class='alaem'> (رضي الله عنه)</span>").replace("(رحمه الله)",
                 "<span class='alaem'> &</span>").replace("(قدس سره)",
                 "<span class='alaem'> +</span>").replace("&اختلاف النسخ&",
-                "</br><h4><font color='#1B5E20'>اختلاف النسخ</font></h4>").replace("&اختلاف الكتب&",
-                "</br><h4><font color='#1B5E20'>اختلاف الكتب</font></h4>").replace("&طبقته في الحديث&",
-                "</br><h4><font color='#1B5E20'>طبقته في الحديث</font></h4>").replace("&", "</br>") +
+                "</br><h4><font color='$headingColor'>اختلاف النسخ</font></h4>").replace("&اختلاف الكتب&",
+                "</br><h4><font color='$headingColor'>اختلاف الكتب</font></h4>").replace("&طبقته في الحديث&",
+                "</br><h4><font color='$headingColor'>طبقته في الحديث</font></h4>").replace("&", "</br>") +
                 "</body>\n" +
                 "</html>"
 
 
         return result
+    }
+
+    private fun colorToCss(color: Int): String {
+        return String.format("#%06X", 0xFFFFFF and color)
     }
 
     private fun checkRejalBookmark() {

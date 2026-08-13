@@ -9,6 +9,7 @@ class PrefManager(ctx: Context) {
 
     private val fontKey = "pref_font"
     private val searchModeKey = "pref_search_mode"
+    private val themeModeKey = "pref_theme_mode"
 
     companion object {
         val initialFontSize = 20 // px
@@ -33,6 +34,16 @@ class PrefManager(ctx: Context) {
     fun getSearchMode(): SearchMode {
         return SearchMode.fromOrdinal(
                 sharedPreferences.getInt(searchModeKey, SearchMode.NAME_CONTAINS.ordinal)
+        )
+    }
+
+    fun saveThemeMode(mode: ThemeMode) {
+        sharedPreferences.edit().putInt(themeModeKey, mode.ordinal).apply()
+    }
+
+    fun getThemeMode(): ThemeMode {
+        return ThemeMode.fromOrdinal(
+                sharedPreferences.getInt(themeModeKey, ThemeMode.SYSTEM.ordinal)
         )
     }
 }

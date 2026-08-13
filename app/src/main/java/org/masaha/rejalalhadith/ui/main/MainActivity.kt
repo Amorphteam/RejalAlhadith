@@ -7,7 +7,9 @@ import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.app.AppCompatDelegate
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -24,6 +26,7 @@ import org.masaha.rejalalhadith.ui.viewer.TextViewer
 import org.masaha.rejalalhadith.utils.Constants
 import org.masaha.rejalalhadith.utils.PrefManager
 import org.masaha.rejalalhadith.utils.SearchMode
+import org.masaha.rejalalhadith.utils.ThemeMode
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -70,6 +73,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         replaceFragment(firstFragment!!)
     }
 
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        applySearchViewTheme()
+    }
+
+    private fun applySearchViewTheme() {
+        val surface = resources.getColor(R.color.surface)
+        val textPrimary = resources.getColor(R.color.text_primary)
+        val textSecondary = resources.getColor(R.color.text_secondary)
+
+        searchView.setBackgroundColor(surface)
+        searchView.setViewTextColor(textPrimary)
+        searchView.setQueryTextColor(textPrimary)
+        searchView.setHintTextColor(textSecondary)
+        searchView.setLeftActionIconColor(textSecondary)
+        searchView.setClearBtnColor(textSecondary)
+        searchView.setMenuItemIconColor(textSecondary)
+        searchView.setActionMenuOverflowColor(textSecondary)
+        searchView.setDividerColor(resources.getColor(R.color.page_background))
+    }
+
     private fun setupSearchModeSelector() {
         when (searchMode) {
             SearchMode.NAME_STARTS_WITH -> searchModeStartsWith.isChecked = true
@@ -112,6 +136,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
+            R.id.nav_theme -> {
+                showThemeDialog()
+            }
+
             R.id.nav_about -> {
 
                 val aboutUs = Intent (this, About::class.java)
@@ -237,6 +265,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             e.printStackTrace()
                         })
         )
+    }
+
+    private fun showThemeDialog() {
+        val options = arrayOf(
+                getString(R.string.theme_light),
+                getString(R.string.theme_dark),
+                getString(R.string.theme_system)
+        )
+        val currentMode = prefManager.getThemeMode()
+
+        AlertDialog.Builder(this)
+                .setTitle(R.string.theme)
+                .setSingleChoiceItems(options, currentMode.ordinal) { dialog, which ->
+                    val selected = ThemeMode.fromOrdinal(which)
+                    dialog.dismiss()
+                    if (selected != currentMode) {
+                        applyThemeMode(selected)
+                    }
+                }
+                .show()
+    }
+
+    private fun applyThemeMode(mode: ThemeMode) {
+        prefManager.saveThemeMode(mode)
+        val nightMode = mode.toNightMode()
+        AppCompatDelegate.setDefaultNightMode(nightMode)
+        delegate.setLocalNightMode(nightMode)
+        recreate()
     }
 
     fun startTextViewer(bundle: Bundle) {
