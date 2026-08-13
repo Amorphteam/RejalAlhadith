@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatDelegate
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.papyrus.mehdok.rejalalhadith.R
 import org.masaha.rejalalhadith.database.Bookmark
@@ -58,6 +59,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         searchView.attachNavigationDrawerToMenuButton(drawer_layout)
         searchView.setOnMenuItemClickListener(this)
         searchView.setOnQueryChangeListener(this)
+        tabMenuButton.setOnClickListener {
+            drawer_layout.openDrawer(GravityCompat.START)
+        }
         nav_view.setNavigationItemSelectedListener(this)
 
         //set bottom nav click listener
@@ -186,18 +190,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 startActivity(webIntent)
             }
             R.id.bottom_bar_tab1 -> {
-                searchView.visibility = View.VISIBLE
-                searchModeGroup.visibility = View.VISIBLE
+                showMainTab()
                 replaceFragment(firstFragment!!)
             }
             R.id.bottom_bar_tab2 -> {
-                searchView.visibility = View.INVISIBLE
-                searchModeGroup.visibility = View.GONE
+                showTabTitle(R.string.tab_ghavaed)
                 replaceFragment(secondFragment!!)
             }
             R.id.bottom_bar_tab3 -> {
-                searchView.visibility = View.INVISIBLE
-                searchModeGroup.visibility = View.GONE
+                showTabTitle(R.string.tab_bookmarks)
                 replaceFragment(thirdFragment!!)
             }
         }
@@ -215,6 +216,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         firstFragment = null
         secondFragment = null
         thirdFragment = null
+    }
+
+    private fun showMainTab() {
+        searchView.visibility = View.VISIBLE
+        searchModeGroup.visibility = View.VISIBLE
+        tabTitleBar.visibility = View.GONE
+    }
+
+    private fun showTabTitle(titleRes: Int) {
+        searchView.visibility = View.GONE
+        searchModeGroup.visibility = View.GONE
+        tabTitle.text = getString(titleRes)
+        tabTitleBar.visibility = View.VISIBLE
     }
 
     private fun replaceFragment(fragment: Fragment) {
@@ -275,16 +289,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
         val currentMode = prefManager.getThemeMode()
 
-        AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
                 .setTitle(R.string.theme)
-                .setSingleChoiceItems(options, currentMode.ordinal) { dialog, which ->
+                .setSingleChoiceItems(options, currentMode.ordinal) { dialogInterface, which ->
                     val selected = ThemeMode.fromOrdinal(which)
-                    dialog.dismiss()
+                    dialogInterface.dismiss()
                     if (selected != currentMode) {
                         applyThemeMode(selected)
                     }
                 }
-                .show()
+                .create()
+        dialog.show()
+        applyRtl(dialog.window?.decorView)
+        applyRtl(dialog.listView)
+    }
+
+    private fun applyRtl(view: View?) {
+        view?.layoutDirection = View.LAYOUT_DIRECTION_RTL
+        view?.textDirection = View.TEXT_DIRECTION_RTL
+        if (view is ViewGroup) {
+            for (index in 0 until view.childCount) {
+                applyRtl(view.getChildAt(index))
+            }
+        }
     }
 
     private fun applyThemeMode(mode: ThemeMode) {

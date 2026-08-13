@@ -11,11 +11,11 @@
     <string name="last_item">هذا هو آخر اسم</string>
     <string name="related_to">متحد مع:</string>
     <string name="related_children">متحد مع:</string>
-    <string name="related_parent">هذا الاسم تابع للاسم</string>
+    <string name="related_parent">متحد مع:</string>
     <string name="related_parents">هذا الاسم تابع للأسماء</string>
     <string name="search_mode_starts_with">بداية الاسم</string>
-    <string name="search_mode_contains">في الاسم</string>
-    <string name="search_mode_description">في الوصف</string>
+    <string name="search_mode_contains">تمام الاسم</string>
+    <string name="search_mode_description">تفاصيل الراوي</string>
     <string name="about_us"><![CDATA[
 <html>
  <head></head>
@@ -42,4 +42,6 @@
     <string name="theme_light">فاتح</string>
     <string name="theme_dark">داكن</string>
     <string name="theme_system">حسب النظام</string>
+    <string name="tab_bookmarks">المفضلة</string>
+    <string name="tab_ghavaed">القواعد العامة</string>
 </resources>

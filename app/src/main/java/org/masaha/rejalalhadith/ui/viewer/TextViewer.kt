@@ -1,6 +1,7 @@
 package org.masaha.rejalalhadith.ui.viewer
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialog
 import android.support.v7.app.AppCompatActivity
@@ -11,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -71,6 +73,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
         setContentView(R.layout.activity_text_viewer)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbar.post { applyToolbarUiFont() }
 
         prefManager = PrefManager(this)
         currentFontSize = prefManager?.getFontSize() ?: PrefManager.initialFontSize
@@ -168,6 +171,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     fun showRejal(rejal: RejalLink, fontSize: Int) {
         name.text = "معجم رجال الحديث ${rejal.joz}: ${rejal.page} / ${rejal.ID}"
         toolbar.title = rejal.name
+        applyToolbarUiFont()
         content.loadDataWithBaseURL(null, getHTMLText(rejal.det, fontSize), "text/html", "UTF-8", null)
         showRelatedRejals(rejal.ID)
         checkRejalBookmark()
@@ -177,12 +181,14 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
         clearRelatedRejals()
         name.text = "معجم رجال الحديث ${item.joz}: ${item.page} / ${item._id}"
         toolbar.title = item.title
+        applyToolbarUiFont()
         content.loadDataWithBaseURL(null, getHTMLText(item.text, fontSize), "text/html", "UTF-8", null)
     }
 
     fun showBookmark(item: Bookmark, fontSize: Int) {
         name.text = "معجم رجال الحديث ${item.joz}: ${item.page} / ${item.bookmarkId}"
         toolbar.title = item.bookmarkTitle
+        applyToolbarUiFont()
         content.loadDataWithBaseURL(null, getHTMLText(item.bookmarkText, fontSize), "text/html", "UTF-8", null)
         showRelatedRejals(item.bookmarkId)
     }
@@ -537,7 +543,8 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
                 "<span class='alaem'> +</span>").replace("&اختلاف النسخ&",
                 "</br><h4><font color='$headingColor'>اختلاف النسخ</font></h4>").replace("&اختلاف الكتب&",
                 "</br><h4><font color='$headingColor'>اختلاف الكتب</font></h4>").replace("&طبقته في الحديث&",
-                "</br><h4><font color='$headingColor'>طبقته في الحديث</font></h4>").replace("&", "</br>") +
+                "</br><h4><font color='$headingColor'>طبقته في الحديث</font></h4>").replace("&", "</br>")
+                .replace(Regex("""(?<![.\d])\.(?![.\d])"""), ".</br>") +
                 "</body>\n" +
                 "</html>"
 
@@ -547,6 +554,20 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
 
     private fun colorToCss(color: Int): String {
         return String.format("#%06X", 0xFFFFFF and color)
+    }
+
+    private fun applyToolbarUiFont() {
+        applyTypeface(toolbar, Typeface.MONOSPACE)
+    }
+
+    private fun applyTypeface(view: View, typeface: Typeface) {
+        if (view is TextView) {
+            view.typeface = typeface
+        } else if (view is ViewGroup) {
+            for (index in 0 until view.childCount) {
+                applyTypeface(view.getChildAt(index), typeface)
+            }
+        }
     }
 
     private fun checkRejalBookmark() {
