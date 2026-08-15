@@ -10,6 +10,7 @@ class PrefManager(ctx: Context) {
     private val fontKey = "pref_font"
     private val searchModeKey = "pref_search_mode"
     private val themeModeKey = "pref_theme_mode"
+    private val mapListUpdatedAtKey = "pref_map_list_updated_at"
 
     companion object {
         val initialFontSize = 20 // px
@@ -45,5 +46,13 @@ class PrefManager(ctx: Context) {
         return ThemeMode.fromOrdinal(
                 sharedPreferences.getInt(themeModeKey, ThemeMode.SYSTEM.ordinal)
         )
+    }
+
+    fun saveMapListUpdatedAt(value: String) {
+        sharedPreferences.edit().putString(mapListUpdatedAtKey, value).apply()
+    }
+
+    fun getMapListUpdatedAt(): String {
+        return sharedPreferences.getString(mapListUpdatedAtKey, "") ?: ""
     }
 }

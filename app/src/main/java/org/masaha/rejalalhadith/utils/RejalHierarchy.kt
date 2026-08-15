@@ -22,8 +22,14 @@ class RejalHierarchy private constructor(
             }
         }
 
+        fun reload(context: Context): RejalHierarchy {
+            return synchronized(this) {
+                load(context.applicationContext).also { instance = it }
+            }
+        }
+
         private fun load(context: Context): RejalHierarchy {
-            val json = context.assets.open("maplist.json").bufferedReader().use { it.readText() }
+            val json = MapListSync.readJson(context)
             val records = JSONObject(json)
                     .getJSONObject("data")
                     .getJSONArray("records")
