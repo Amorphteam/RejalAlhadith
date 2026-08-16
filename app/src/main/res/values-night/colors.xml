@@ -9,4 +9,5 @@
     <color name="webview_text">#C8C8C8</color>
     <color name="webview_background">#1E1E1E</color>
     <color name="webview_heading">#81C784</color>
+    <color name="footer_title_fill">#2A2A2A</color>
 </resources>
