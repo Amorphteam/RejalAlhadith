@@ -31,24 +31,6 @@
             android:orientation="vertical"
             >
 
-            <TextView
-                android:id="@+id/toolbarTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:maxLines="1"
-                android:paddingBottom="4dp"
-                android:paddingEnd="16dp"
-                android:paddingStart="16dp"
-                android:paddingTop="12dp"
-                android:singleLine="true"
-                android:textAppearance="@style/ToolbarTitle"
-                android:textColor="@color/white"
-                android:textDirection="rtl"
-                tools:text="۲ ـ أبو الحسن الشباني"
-                />
-
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
@@ -57,6 +39,24 @@
                 app:contentInsetStartWithNavigation="0dp"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
                 app:titleTextAppearance="@style/ToolbarTitle"
+                />
+
+            <TextView
+                android:id="@+id/toolbarTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingBottom="12dp"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:paddingTop="4dp"
+                android:singleLine="true"
+                android:textAppearance="@style/ToolbarTitle"
+                android:textColor="@color/white"
+                android:textDirection="rtl"
+                tools:text="۲ ـ أبو الحسن الشباني"
                 />
         </LinearLayout>
 
