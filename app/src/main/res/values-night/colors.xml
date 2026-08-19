@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="ic_launcher_background">#000000</color>
+    <color name="logo_circle_fill">#121212</color>
     <color name="page_background">#121212</color>
     <color name="surface">#1E1E1E</color>
     <color name="text_primary">#EDEDED</color>

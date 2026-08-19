@@ -82,16 +82,6 @@
                 android:paddingStart="8dp">
 
                 <RadioButton
-                    android:id="@+id/searchModeStartsWith"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:buttonTint="@color/on_primary"
-                    android:text="@string/search_mode_starts_with"
-                    android:textColor="@color/on_primary"
-                    android:textSize="12sp" />
-
-                <RadioButton
                     android:id="@+id/searchModeContains"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -109,6 +99,16 @@
                     android:layout_marginStart="12dp"
                     android:buttonTint="@color/on_primary"
                     android:text="@string/search_mode_description"
+                    android:textColor="@color/on_primary"
+                    android:textSize="12sp" />
+
+                <RadioButton
+                    android:id="@+id/searchModeStartsWith"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:buttonTint="@color/on_primary"
+                    android:text="@string/search_mode_starts_with"
                     android:textColor="@color/on_primary"
                     android:textSize="12sp" />
             </RadioGroup>

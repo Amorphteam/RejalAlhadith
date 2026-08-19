@@ -23,12 +23,6 @@
         android:title="@string/contact"/>
 
     <item
-        android:id="@+id/error_contact"
-        android:icon="@drawable/ic_bug_report_black_24dp"
-        android:title="@string/error"
-        />
-
-    <item
         android:id="@+id/allapps"
         android:icon="@drawable/ic_masaha_team"
         android:title="@string/allapps"

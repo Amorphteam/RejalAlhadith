@@ -175,14 +175,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
 
-            R.id.error_contact->{
-                val mailIntent = Intent(Intent.ACTION_VIEW)
-                val data = Uri.parse("mailto:?subject=" + "مرسل من تطبيق رجال الحديث" + "&body=" + "أدخل نصاً" + "&to=" + "err@masaha.org")
-                mailIntent.data = data
-                startActivity(Intent.createChooser(mailIntent, "الإبلاغ عن خطأ"))
-
-            }
-
             R.id.allapps->{
                 val webIntent = Intent(Intent.ACTION_VIEW)
                 val data = Uri.parse("https://play.google.com/store/apps/dev?id=8323529867410855923")

@@ -73,6 +73,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
         setContentView(R.layout.activity_text_viewer)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
         toolbar.post { applyToolbarUiFont() }
 
         prefManager = PrefManager(this)
@@ -170,8 +171,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
 
     fun showRejal(rejal: RejalLink, fontSize: Int) {
         name.text = "معجم رجال الحديث ${rejal.joz}: ${rejal.page} / ${rejal.ID}"
-        toolbar.title = rejal.name
-        applyToolbarUiFont()
+        setToolbarTitle(rejal.ID, rejal.name)
         content.loadDataWithBaseURL(null, getHTMLText(rejal.det, fontSize), "text/html", "UTF-8", null)
         showRelatedRejals(rejal.ID)
         checkRejalBookmark()
@@ -180,15 +180,13 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     fun showGhavaed(item: RejalGhavaed, fontSize: Int) {
         clearRelatedRejals()
         name.text = "معجم رجال الحديث ${item.joz}: ${item.page} / ${item._id}"
-        toolbar.title = item.title
-        applyToolbarUiFont()
+        setToolbarTitle(item._id, item.title)
         content.loadDataWithBaseURL(null, getHTMLText(item.text, fontSize), "text/html", "UTF-8", null)
     }
 
     fun showBookmark(item: Bookmark, fontSize: Int) {
         name.text = "معجم رجال الحديث ${item.joz}: ${item.page} / ${item.bookmarkId}"
-        toolbar.title = item.bookmarkTitle
-        applyToolbarUiFont()
+        setToolbarTitle(item.bookmarkId, item.bookmarkTitle)
         content.loadDataWithBaseURL(null, getHTMLText(item.bookmarkText, fontSize), "text/html", "UTF-8", null)
         showRelatedRejals(item.bookmarkId)
     }
@@ -480,7 +478,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     private fun showStyleDialog() {
-        StyleDialog.newInstance(toolbar.height)
+        StyleDialog.newInstance(viewerAppBar.height)
                 .setClickListener(this)
                 .show(supportFragmentManager, "TextViewerStyle")
     }
@@ -556,7 +554,20 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
         return String.format("#%06X", 0xFFFFFF and color)
     }
 
+    private fun setToolbarTitle(id: Int, title: String) {
+        toolbarTitle.text = "${toArabicIndic(id)} ـ $title"
+        applyToolbarUiFont()
+    }
+
+    private fun toArabicIndic(value: Int): String {
+        val digits = charArrayOf('٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩')
+        return value.toString().map { char ->
+            if (char in '0'..'9') digits[char - '0'] else char
+        }.joinToString("")
+    }
+
     private fun applyToolbarUiFont() {
+        applyTypeface(toolbarTitle, Typeface.MONOSPACE)
         applyTypeface(toolbar, Typeface.MONOSPACE)
     }
 
