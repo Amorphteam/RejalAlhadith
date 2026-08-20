@@ -13,11 +13,8 @@ class About : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
 
-        textView2
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            textView2.text = Html.fromHtml(getString(R.string.about_us), Html.FROM_HTML_MODE_COMPACT);
+            textView2.text = Html.fromHtml(getString(R.string.about_us), Html.FROM_HTML_MODE_LEGACY)
         } else {
             textView2.text = Html.fromHtml(getString(R.string.about_us))
         }

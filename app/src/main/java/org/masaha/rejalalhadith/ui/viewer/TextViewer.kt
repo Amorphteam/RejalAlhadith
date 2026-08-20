@@ -1,7 +1,9 @@
 package org.masaha.rejalalhadith.ui.viewer
 
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialog
 import android.support.v7.app.AppCompatActivity
@@ -13,7 +15,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import com.papyrus.mehdok.rejalalhadith.R
@@ -37,6 +41,11 @@ import org.masaha.rejalalhadith.utils.PrefManager
 
 class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
 
+    companion object {
+        // Set to false after testing to show the tooltip only once.
+        private const val FORCE_SHOW_RELATION_TOOLTIP = true
+    }
+
     private val subscriptions: CompositeDisposable = CompositeDisposable()
 
     public enum class ViewerType {
@@ -56,6 +65,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     private var relatedTitleRes: Int = R.string.related_to
     private var relatedItems: List<RelatedRejalItem> = emptyList()
     private var relatedSheetDialog: BottomSheetDialog? = null
+    private var relationTooltipPopup: PopupWindow? = null
 
     private data class RelatedRejalItem(
             val rejal: RejalLink,
@@ -242,12 +252,88 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     }
 
     override fun onDestroy() {
+        dismissRelationTooltip()
         relatedSheetDialog?.dismiss()
         relatedSheetDialog = null
         super.onDestroy()
 
         subscriptions.clear()
         subscriptions.dispose()
+    }
+
+    private fun maybeShowRelationTooltip() {
+        if (relationButton.visibility != View.VISIBLE) {
+            return
+        }
+        if (!FORCE_SHOW_RELATION_TOOLTIP && prefManager?.isRelationTooltipDismissed() == true) {
+            return
+        }
+        relationButton.post { showRelationTooltip() }
+    }
+
+    private fun showRelationTooltip() {
+        if (relationButton.visibility != View.VISIBLE || relationTooltipPopup?.isShowing == true) {
+            return
+        }
+
+        val content = layoutInflater.inflate(R.layout.relation_tooltip, null)
+        val popup = PopupWindow(
+                content,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                true
+        )
+        popup.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popup.isOutsideTouchable = true
+        popup.isTouchable = true
+        popup.setOnDismissListener {
+            if (!FORCE_SHOW_RELATION_TOOLTIP) {
+                prefManager?.setRelationTooltipDismissed(true)
+            }
+            relationTooltipPopup = null
+        }
+
+        content.setOnClickListener { popup.dismiss() }
+        content.findViewById<LinearLayout>(R.id.relationTooltipBubble)?.setOnClickListener { /* keep open */ }
+
+        relationTooltipPopup = popup
+        popup.showAtLocation(relationButton, Gravity.NO_GRAVITY, 0, 0)
+
+        val container = content.findViewById<LinearLayout>(R.id.relationTooltipContainer)
+        container?.post { positionRelationTooltipContainer(container) }
+    }
+
+    private fun positionRelationTooltipContainer(container: LinearLayout) {
+        val buttonLocation = IntArray(2)
+        relationButton.getLocationOnScreen(buttonLocation)
+        val overlayLocation = IntArray(2)
+        (container.parent as View).getLocationOnScreen(overlayLocation)
+
+        val arrow = container.findViewById<View>(R.id.relationTooltipArrow)
+        val arrowWidth = arrow?.width?.takeIf { it > 0 } ?: dpToPx(16)
+        val arrowOffset = dpToPx(12) + arrowWidth / 2
+        val buttonCenterX = buttonLocation[0] + relationButton.width / 2
+
+        val params = container.layoutParams as FrameLayout.LayoutParams
+        params.gravity = Gravity.TOP or Gravity.START
+        params.leftMargin = (buttonCenterX - overlayLocation[0] - arrowOffset)
+            .coerceAtLeast(dpToPx(8))
+        params.topMargin = (buttonLocation[1] - overlayLocation[1] - container.height - dpToPx(4))
+            .coerceAtLeast(dpToPx(16))
+        container.layoutParams = params
+    }
+
+    private fun dismissRelationTooltip() {
+        relationTooltipPopup?.dismiss()
+        relationTooltipPopup = null
+    }
+
+    private fun dpToPx(value: Int): Int {
+        return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                value.toFloat(),
+                resources.displayMetrics
+        ).toInt()
     }
 
     private fun getAllRejalFromDB(rejal: RejalLink, filter: String, searchMode: SearchMode) {
@@ -301,6 +387,7 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     private fun clearRelatedRejals() {
         relatedRequestId++
         relatedItems = emptyList()
+        dismissRelationTooltip()
         relationButton.visibility = View.GONE
         relatedSheetDialog?.dismiss()
         relatedSheetDialog = null
@@ -357,6 +444,9 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
                                 View.GONE
                             } else {
                                 View.VISIBLE
+                            }
+                            if (relationButton.visibility == View.VISIBLE) {
+                                maybeShowRelationTooltip()
                             }
                         }, { error ->
                             Log.e("TextViewer", "Unable to load related rejals", error)

@@ -21,6 +21,8 @@
     <color name="webview_background">@color/white</color>
     <color name="webview_heading">#1B5E20</color>
     <color name="footer_title_fill">#F3F3F3</color>
+    <color name="relation_tooltip_background">#2A2A2A</color>
+    <color name="relation_tooltip_text">#FFFFFF</color>
 
 
 

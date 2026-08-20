@@ -11,6 +11,7 @@ class PrefManager(ctx: Context) {
     private val searchModeKey = "pref_search_mode"
     private val themeModeKey = "pref_theme_mode"
     private val mapListUpdatedAtKey = "pref_map_list_updated_at"
+    private val relationTooltipDismissedKey = "pref_relation_tooltip_dismissed"
 
     companion object {
         val initialFontSize = 20 // px
@@ -54,5 +55,13 @@ class PrefManager(ctx: Context) {
 
     fun getMapListUpdatedAt(): String {
         return sharedPreferences.getString(mapListUpdatedAtKey, "") ?: ""
+    }
+
+    fun setRelationTooltipDismissed(dismissed: Boolean) {
+        sharedPreferences.edit().putBoolean(relationTooltipDismissedKey, dismissed).apply()
+    }
+
+    fun isRelationTooltipDismissed(): Boolean {
+        return sharedPreferences.getBoolean(relationTooltipDismissedKey, false)
     }
 }

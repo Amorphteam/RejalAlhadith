@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relationTooltipOverlay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:id="@+id/relationTooltipContainer"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:elevation="8dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/relationTooltipBubble"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_relation_tooltip"
+            android:orientation="vertical"
+            android:paddingBottom="14dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="14dp">
+
+            <TextView
+                android:id="@+id/relationTooltipText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="4dp"
+                android:text="@string/relation_tooltip"
+                android:textColor="@color/relation_tooltip_text"
+                android:textDirection="rtl"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/relationTooltipArrow"
+            android:layout_width="16dp"
+            android:layout_height="8dp"
+            android:layout_gravity="start"
+            android:layout_marginStart="12dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_relation_tooltip_arrow" />
+    </LinearLayout>
+
+</FrameLayout>
