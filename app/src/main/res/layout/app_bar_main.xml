@@ -58,7 +58,7 @@
                     android:layout_margin="8dp"
                     app:floatingSearch_close_search_on_keyboard_dismiss="true"
                     app:floatingSearch_leftActionMode="showHamburger"
-                    app:floatingSearch_searchHint="    رجال الحديث"
+                    app:floatingSearch_searchHint="رجال الحديث"
                     app:floatingSearch_showSearchKey="true"
                     app:floatingSearch_backgroundColor="@color/surface"
                     app:floatingSearch_viewTextColor="@color/text_primary"

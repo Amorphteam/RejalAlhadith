@@ -8,12 +8,15 @@ import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
+import org.masaha.rejalalhadith.ui.BaseAppCompatActivity
 import android.util.Log
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.papyrus.mehdok.rejalalhadith.R
 import org.masaha.rejalalhadith.database.Bookmark
@@ -36,7 +39,7 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
+class MainActivity : BaseAppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
         BottomNavigationView.OnNavigationItemSelectedListener, FloatingSearchView.OnMenuItemClickListener,
         FloatingSearchView.OnQueryChangeListener, OnTabItemClickListener {
 
@@ -80,6 +83,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         applySearchViewTheme()
+        searchView.post { tightenSearchBarSpacing() }
     }
 
     private fun applySearchViewTheme() {
@@ -96,6 +100,48 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         searchView.setMenuItemIconColor(textSecondary)
         searchView.setActionMenuOverflowColor(textSecondary)
         searchView.setDividerColor(resources.getColor(R.color.page_background))
+    }
+
+    private fun tightenSearchBarSpacing() {
+        val gap = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                4f,
+                resources.displayMetrics
+        ).toInt()
+
+        val inputParentId = resources.getIdentifier("search_input_parent", "id", packageName)
+        if (inputParentId != 0) {
+            val inputParent = searchView.findViewById<View>(inputParentId)
+            val params = inputParent?.layoutParams as? ViewGroup.MarginLayoutParams
+            if (params != null) {
+                params.marginStart = gap
+                params.leftMargin = gap
+                inputParent.layoutParams = params
+            }
+        }
+
+        val leftContainerId = resources.getIdentifier(
+                "search_bar_left_action_container",
+                "id",
+                packageName
+        )
+        if (leftContainerId != 0) {
+            val leftContainer = searchView.findViewById<View>(leftContainerId)
+            val params = leftContainer?.layoutParams as? ViewGroup.MarginLayoutParams
+            if (params != null) {
+                params.marginStart = gap
+                params.leftMargin = gap
+                leftContainer.layoutParams = params
+            }
+        }
+
+        val inputId = resources.getIdentifier("search_bar_text", "id", packageName)
+        if (inputId != 0) {
+            val input = searchView.findViewById<EditText>(inputId) ?: return
+            input.gravity = Gravity.START or Gravity.CENTER_VERTICAL
+            input.textDirection = View.TEXT_DIRECTION_RTL
+            input.setPaddingRelative(gap, input.paddingTop, gap, input.paddingBottom)
+        }
     }
 
     private fun setupSearchModeSelector() {

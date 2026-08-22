@@ -6,8 +6,8 @@ import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialog
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import org.masaha.rejalalhadith.ui.BaseAppCompatActivity
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -39,11 +39,11 @@ import kotlinx.android.synthetic.main.content_text_viewer.*
 import org.masaha.rejalalhadith.utils.PrefManager
 
 
-class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
+class TextViewer : BaseAppCompatActivity(), StyleDialog.ClickListener {
 
     companion object {
-        // Set to false after testing to show the tooltip only once.
-        private const val FORCE_SHOW_RELATION_TOOLTIP = true
+        // Show the tooltip only once; after dismiss it stays hidden.
+        private const val FORCE_SHOW_RELATION_TOOLTIP = false
     }
 
     private val subscriptions: CompositeDisposable = CompositeDisposable()
@@ -306,20 +306,26 @@ class TextViewer : AppCompatActivity(), StyleDialog.ClickListener {
     private fun positionRelationTooltipContainer(container: LinearLayout) {
         val buttonLocation = IntArray(2)
         relationButton.getLocationOnScreen(buttonLocation)
+        val overlay = container.parent as View
+        overlay.layoutDirection = View.LAYOUT_DIRECTION_LTR
+        container.layoutDirection = View.LAYOUT_DIRECTION_LTR
+
         val overlayLocation = IntArray(2)
-        (container.parent as View).getLocationOnScreen(overlayLocation)
+        overlay.getLocationOnScreen(overlayLocation)
 
         val arrow = container.findViewById<View>(R.id.relationTooltipArrow)
         val arrowWidth = arrow?.width?.takeIf { it > 0 } ?: dpToPx(16)
         val arrowOffset = dpToPx(12) + arrowWidth / 2
         val buttonCenterX = buttonLocation[0] + relationButton.width / 2
+        val maxLeft = (overlay.width - container.width - dpToPx(8)).coerceAtLeast(dpToPx(8))
 
         val params = container.layoutParams as FrameLayout.LayoutParams
-        params.gravity = Gravity.TOP or Gravity.START
+        params.gravity = Gravity.TOP or Gravity.LEFT
         params.leftMargin = (buttonCenterX - overlayLocation[0] - arrowOffset)
-            .coerceAtLeast(dpToPx(8))
+            .coerceIn(dpToPx(8), maxLeft)
         params.topMargin = (buttonLocation[1] - overlayLocation[1] - container.height - dpToPx(4))
             .coerceAtLeast(dpToPx(16))
+        params.rightMargin = 0
         container.layoutParams = params
     }
 

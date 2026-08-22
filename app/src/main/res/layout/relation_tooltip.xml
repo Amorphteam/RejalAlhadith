@@ -5,13 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:layoutDirection="ltr">
 
     <LinearLayout
         android:id="@+id/relationTooltipContainer"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:elevation="8dp"
+        android:layoutDirection="ltr"
         android:orientation="vertical">
 
         <LinearLayout
@@ -40,8 +42,8 @@
             android:id="@+id/relationTooltipArrow"
             android:layout_width="16dp"
             android:layout_height="8dp"
-            android:layout_gravity="start"
-            android:layout_marginStart="12dp"
+            android:layout_gravity="left"
+            android:layout_marginLeft="12dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_relation_tooltip_arrow" />
     </LinearLayout>
