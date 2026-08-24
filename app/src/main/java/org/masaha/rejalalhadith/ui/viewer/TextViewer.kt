@@ -639,6 +639,7 @@ class TextViewer : BaseAppCompatActivity(), StyleDialog.ClickListener {
                 "</br><h4><font color='$headingColor'>اختلاف الكتب</font></h4>").replace("&طبقته في الحديث&",
                 "</br><h4><font color='$headingColor'>طبقته في الحديث</font></h4>").replace("&", "</br>")
                 .replace(Regex("""(?<![.\d])\.(?![.\d])"""), ".</br>") +
+                "</br></br>" +
                 "</body>\n" +
                 "</html>"
 
