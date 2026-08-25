@@ -13,6 +13,7 @@ import android.widget.TextView
 import com.papyrus.mehdok.rejalalhadith.R
 import org.masaha.rejalalhadith.database.RejalLink
 import org.masaha.rejalalhadith.ui.main.OnTabItemClickListener
+import org.masaha.rejalalhadith.utils.ArabicTextNormalizer
 import org.masaha.rejalalhadith.utils.SearchMode
 
 class RejalAdapter(private val rejals: MutableList<RejalLink>, private var listener: OnTabItemClickListener?) : RecyclerView.Adapter<RejalAdapter.ViewHolder>() {
@@ -78,22 +79,22 @@ class RejalAdapter(private val rejals: MutableList<RejalLink>, private var liste
             }
 
             val spannable = SpannableString(text)
-            var start = text.indexOf(query, ignoreCase = true)
-            while (start >= 0) {
-                val end = start + query.length
+            var searchFrom = 0
+            while (searchFrom < text.length) {
+                val match = findNormalizedMatch(text, query, searchFrom) ?: break
                 spannable.setSpan(
                         BackgroundColorSpan(highlightColor),
-                        start,
-                        end,
+                        match.first,
+                        match.last + 1,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
                 spannable.setSpan(
                         StyleSpan(Typeface.BOLD),
-                        start,
-                        end,
+                        match.first,
+                        match.last + 1,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
-                start = text.indexOf(query, end, ignoreCase = true)
+                searchFrom = match.last + 1
             }
             return spannable
         }
@@ -111,8 +112,8 @@ class RejalAdapter(private val rejals: MutableList<RejalLink>, private var liste
                 return ""
             }
 
-            val matchIndex = plain.indexOf(query, ignoreCase = true)
-            if (matchIndex < 0) {
+            val match = findNormalizedMatch(plain, query)
+            if (match == null) {
                 return if (plain.length <= SNIPPET_RADIUS * 2) {
                     plain
                 } else {
@@ -120,11 +121,42 @@ class RejalAdapter(private val rejals: MutableList<RejalLink>, private var liste
                 }
             }
 
-            val start = maxOf(0, matchIndex - SNIPPET_RADIUS)
-            val end = minOf(plain.length, matchIndex + query.length + SNIPPET_RADIUS)
+            val start = maxOf(0, match.first - SNIPPET_RADIUS)
+            val end = minOf(plain.length, match.last + 1 + SNIPPET_RADIUS)
             val prefix = if (start > 0) "…" else ""
             val suffix = if (end < plain.length) "…" else ""
             return prefix + plain.substring(start, end).trim() + suffix
+        }
+
+        private fun findNormalizedMatch(
+                text: String,
+                query: String,
+                startIndex: Int = 0
+        ): IntRange? {
+            val normalizedQuery = ArabicTextNormalizer.normalize(query)
+            if (normalizedQuery.isEmpty() || startIndex >= text.length) {
+                return null
+            }
+
+            val indexMap = mutableListOf<Int>()
+            val normalizedText = StringBuilder()
+            for (index in startIndex until text.length) {
+                val normalizedChar = ArabicTextNormalizer.normalize(text[index].toString())
+                if (normalizedChar.isEmpty()) {
+                    continue
+                }
+                normalizedText.append(normalizedChar)
+                repeat(normalizedChar.length) {
+                    indexMap.add(index)
+                }
+            }
+
+            val matchStart = normalizedText.indexOf(normalizedQuery)
+            if (matchStart < 0) {
+                return null
+            }
+            val matchEnd = matchStart + normalizedQuery.length - 1
+            return indexMap[matchStart]..indexMap[matchEnd]
         }
     }
 }
